@@ -279,7 +279,7 @@ async function searchSafe() {
         </div>
       </div>
       <div class="result-box"><div class="result-content">${result}</div></div>
-      <a href="https://map.naver.com/v5/directions/-/${encodeURIComponent(from)}/-/${encodeURIComponent(to)}/-/walk" target="_blank" style="display:block;width:100%;padding:14px;background:#03C75A;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;text-align:center;margin-top:12px;text-decoration:none;">🗺️ 네이버 지도에서 경로 확인</a>`;
+      <a href="${'https://map.naver.com/v5/directions/-/'+encodeURIComponent(from)+'/-/'+encodeURIComponent(to)+'/-/walk'}" target="_blank" style="display:block;width:100%;padding:14px;background:#03C75A;color:#fff;border-radius:10px;font-size:15px;font-weight:600;text-align:center;margin-top:12px;text-decoration:none;">🗺️ 네이버 지도에서 경로 확인</a>\`;
   } catch(e) {
     div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div>`;
   }
