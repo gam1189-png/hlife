@@ -239,17 +239,15 @@ function getCoords(address) {
           if (status2 === kakao.maps.services.Status.OK) {
             resolve({lat: parseFloat(result2[0].y), lng: parseFloat(result2[0].x)});
           } else {
-            // 역 이름에서 "역" 제거 후 재시도
-            const simplified = address.replace(/역$/, '').replace(/station$/i, '');
-            places.keywordSearch(simplified + ' 역', (result3, status3) => {
+            places.keywordSearch(address + ' 역', (result3, status3) => {
               if (status3 === kakao.maps.services.Status.OK) {
                 resolve({lat: parseFloat(result3[0].y), lng: parseFloat(result3[0].x)});
               } else {
                 reject(new Error('위치를 찾을 수 없습니다: ' + address));
               }
-            });
+            }, {location: new kakao.maps.LatLng(37.2, 127.0), radius: 30000});
           }
-        });
+        }, {location: new kakao.maps.LatLng(37.2, 127.0), radius: 30000});
       }
     });
   });
@@ -290,11 +288,35 @@ async function searchSafe() {
   const cctv=Math.floor(Math.random()*8)+5, lights=Math.floor(Math.random()*15)+10, mins=Math.floor(Math.random()*8)+12, score=Math.floor(Math.random()*20)+78;
 
   try {
-    const [result, fromCoords, toCoords] = await Promise.all([
-      callClaude(`화성시 안전 귀가 AI. ${from}→${to} ${time} 도보 안심경로 안내.\nCCTV ${cctv}개, 가로등 ${lights}개, 도보 ${mins}분, 안전점수 ${score}점.\n1.권장경로 2.안전이유 3.주의사항 4.긴급연락처(112, 031-369-2000)`),
+    const [aiResponse, fromCoords, toCoords] = await Promise.all([
+      callClaude(`화성시 안전 귀가 AI. ${from}→${to} ${time} 도보 안심경로 안내.
+CCTV ${cctv}개, 가로등 ${lights}개, 도보 ${mins}분, 안전점수 ${score}점.
+
+반드시 아래 형식을 포함해서 답변해주세요:
+
+[WAYPOINTS]
+경유지1|경유지2|경유지3
+[/WAYPOINTS]
+
+(경유지는 실제 존재하는 장소명, 최대 3개, | 로 구분)
+
+그 다음 안심경로 상세 안내:
+1.권장경로 2.안전이유(CCTV·가로등·편의점 등) 3.주의사항 4.긴급연락처(112, 031-369-2000)`),
       getCoords(from),
       getCoords(to)
     ]);
+
+    // 경유지 파싱
+    let waypoints = [];
+    const wpMatch = aiResponse.match(/\[WAYPOINTS\]([\s\S]*?)\[\/WAYPOINTS\]/);
+    if (wpMatch) {
+      waypoints = wpMatch[1].trim().split('|').map(w=>w.trim()).filter(w=>w);
+    }
+    const result = aiResponse.replace(/\[WAYPOINTS\][\s\S]*?\[\/WAYPOINTS\]/g, '').trim();
+
+    // 카카오맵 경유지 URL 생성
+    let kakaoUrl = `kakaomap://route?sp=${fromCoords.lat},${fromCoords.lng}&ep=${toCoords.lat},${toCoords.lng}&by=FOOT`;
+    let kakaoWebUrl = `https://map.kakao.com/link/to/${encodeURIComponent(to)},${toCoords.lat},${toCoords.lng}/from/${encodeURIComponent(from)},${fromCoords.lat},${fromCoords.lng}`;
 
     div.innerHTML = `
       <div class="route-box">
@@ -308,7 +330,8 @@ async function searchSafe() {
           <div class="stat-item"><div class="stat-num">${mins}분</div><div class="stat-label">도보</div></div>
         </div>
       </div>
-      <div class="result-box"><div class="result-content">${result}</div></div>`;
+      <div class="result-box"><div class="result-content">${result}</div></div>
+      <a href="${kakaoWebUrl}" target="_blank" style="display:block;width:100%;padding:14px;background:#FEE500;color:#000;border-radius:10px;font-size:15px;font-weight:600;text-align:center;margin-top:12px;text-decoration:none;">🗺️ 카카오맵으로 도보 길찾기</a>`;
 
     // 지도 표시
     mapDiv.style.display = 'block';
@@ -320,6 +343,22 @@ async function searchSafe() {
 
     new kakao.maps.Marker({map, position: new kakao.maps.LatLng(fromCoords.lat, fromCoords.lng)});
     new kakao.maps.Marker({map, position: new kakao.maps.LatLng(toCoords.lat, toCoords.lng)});
+
+    // 경유지 마커
+    for (const wp of waypoints) {
+      try {
+        const wpCoords = await getCoords(wp);
+        new kakao.maps.Marker({
+          map,
+          position: new kakao.maps.LatLng(wpCoords.lat, wpCoords.lng),
+          title: wp
+        });
+        new kakao.maps.InfoWindow({
+          position: new kakao.maps.LatLng(wpCoords.lat, wpCoords.lng),
+          content: `<div style="padding:3px 6px;font-size:11px;color:#555;">📍 ${wp}</div>`
+        }).open(map);
+      } catch(e) {}
+    }
 
     new kakao.maps.Polyline({
       map,
