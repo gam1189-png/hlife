@@ -15,9 +15,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Apple SD Gothic Ne
 .greeting{font-size:18px;font-weight:600;margin-bottom:4px;}
 .greeting-sub{font-size:14px;color:#666;margin-bottom:20px;}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.card{background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:18px 16px;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;gap:10px;-webkit-tap-highlight-color:transparent;}
+.card{background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:18px 16px;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;gap:10px;}
 .card:active{transform:scale(0.97);}
-.card:hover{border-color:#cbd5e1;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.card:hover{border-color:#cbd5e1;}
 .card-wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:16px;}
 .card-wide .card-body{flex:1;}
 .icon-wrap{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
@@ -32,25 +32,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Apple SD Gothic Ne
 .screen{display:none;}
 .screen.active{display:block;}
 .svc-header{background:#fff;padding:16px 20px;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;}
-.back-btn{font-size:24px;cursor:pointer;color:#555;line-height:1;}
+.back-btn{font-size:24px;cursor:pointer;color:#555;}
 .svc-title{font-size:17px;font-weight:600;}
 .svc-body{max-width:600px;margin:0 auto;padding:20px 16px;}
 .form-group{margin-bottom:14px;}
 .form-label{font-size:13px;font-weight:500;color:#555;margin-bottom:6px;display:block;}
-.form-input{width:100%;padding:12px 14px;border:1px solid #e0e0e0;border-radius:10px;font-size:15px;font-family:inherit;outline:none;transition:border-color 0.15s;}
+.form-input{width:100%;padding:12px 14px;border:1px solid #e0e0e0;border-radius:10px;font-size:15px;font-family:inherit;outline:none;}
 .form-input:focus{border-color:#2563eb;}
 select.form-input{background:#fff;}
 .submit-btn{width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit;}
-.submit-btn:active{background:#1d4ed8;}
 .result-box{background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:18px;margin-top:16px;}
 .result-loading{text-align:center;padding:30px;color:#888;font-size:14px;}
 .result-content{font-size:14px;line-height:1.8;color:#1a1a1a;white-space:pre-wrap;}
-.cam-wrap{background:#000;border-radius:14px;overflow:hidden;position:relative;margin-bottom:14px;}
-#cam-video{width:100%;display:block;max-height:300px;object-fit:cover;}
-.cam-overlay{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);}
-.cam-btn{padding:10px 24px;border-radius:30px;border:none;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;background:#fff;color:#1a1a1a;}
-#cam-canvas{display:none;}
-#cam-preview{width:100%;border-radius:14px;margin-bottom:14px;display:none;}
 .map-box{background:#e8f0fe;border-radius:14px;padding:30px;text-align:center;margin-bottom:14px;border:1px dashed #93c5fd;}
 .map-icon{font-size:36px;margin-bottom:8px;}
 .map-text{font-size:13px;color:#3b82f6;font-weight:500;}
@@ -62,24 +55,56 @@ select.form-input{background:#fff;}
 .badge-close{background:#fee2e2;color:#dc2626;}
 .badge-avail{background:#dbeafe;color:#1d4ed8;}
 .badge-full{background:#f3f4f6;color:#9ca3af;}
-.result-item-btn{display:inline-block;padding:8px 14px;background:#f0f9ff;color:#0369a1;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:inherit;}
+.result-item-btn{padding:8px 14px;background:#f0f9ff;color:#0369a1;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:inherit;}
 .route-box{background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:16px;margin-bottom:12px;}
 .route-safe-score{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
 .score-circle{width:56px;height:56px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0;}
 .score-num{font-size:18px;font-weight:700;color:#16a34a;}
 .score-label{font-size:9px;color:#16a34a;}
-.route-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.route-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
 .stat-item{background:#f8f8f8;border-radius:8px;padding:8px;text-align:center;}
 .stat-num{font-size:16px;font-weight:600;}
 .stat-label{font-size:10px;color:#888;margin-top:2px;}
+.cam-wrap{background:#000;border-radius:14px;overflow:hidden;position:relative;margin-bottom:14px;}
+#cam-video{width:100%;display:block;max-height:300px;object-fit:cover;}
+.cam-overlay{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);}
+.cam-btn{padding:10px 24px;border-radius:30px;border:none;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;background:#fff;color:#1a1a1a;}
+#cam-canvas{display:none;}
+#cam-preview{width:100%;border-radius:14px;margin-bottom:14px;display:none;}
 </style>
 </head>
 <body>
 
+<!-- API 키 설정 -->
 <script>
-// ===== 여기만 수정하세요 =====
-const CLAUDE_API_KEY = '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';
-// ============================
+const API_KEY = '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';
+
+async function callClaude(prompt, imageBase64) {
+  const content = [];
+  if (imageBase64) {
+    content.push({type:'image', source:{type:'base64', media_type:'image/jpeg', data:imageBase64}});
+  }
+  content.push({type:'text', text:prompt});
+  
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1500,
+      messages: [{role:'user', content}]
+    })
+  });
+  
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message || '오류 발생');
+  return data.content[0].text;
+}
 </script>
 
 <!-- 메인 홈 -->
@@ -125,28 +150,15 @@ const CLAUDE_API_KEY = 'sk-ant-api03-eDdf6AllcKtsyQM4s5geeLO7ZKzfwfU72Sl768wOSYU
     <div class="form-group"><label class="form-label">가구 유형</label>
       <select class="form-input" id="w-family">
         <option value="">선택해주세요</option>
-        <option value="1인가구">1인 가구</option><option value="부부">부부 (자녀 없음)</option>
-        <option value="다자녀">다자녀 가구</option><option value="한부모">한부모 가구</option>
-        <option value="임산부">임산부 가구</option><option value="노인가구">노인 가구 (65세 이상)</option>
-        <option value="장애인가구">장애인 가구</option>
+        <option>1인가구</option><option>부부 (자녀 없음)</option><option>다자녀 가구</option>
+        <option>한부모 가구</option><option>임산부 가구</option><option>노인 가구 (65세 이상)</option><option>장애인 가구</option>
       </select>
     </div>
-    <div class="form-group"><label class="form-label">소득 수준 (중위소득 기준)</label>
+    <div class="form-group"><label class="form-label">소득 수준</label>
       <select class="form-input" id="w-income">
         <option value="">선택해주세요</option>
-        <option value="50%이하">50% 이하</option><option value="100%이하">50~100%</option>
-        <option value="150%이하">100~150%</option><option value="150%초과">150% 초과</option>
+        <option>중위소득 50% 이하</option><option>중위소득 50~100%</option><option>중위소득 100~150%</option><option>중위소득 150% 초과</option>
       </select>
-    </div>
-    <div class="form-group"><label class="form-label">관심 분야</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">
-        <label style="display:flex;align-items:center;gap:6px;font-size:14px;"><input type="checkbox" value="육아"> 육아·돌봄</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:14px;"><input type="checkbox" value="주거"> 주거·임대</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:14px;"><input type="checkbox" value="의료"> 의료·건강</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:14px;"><input type="checkbox" value="교육"> 교육·장학</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:14px;"><input type="checkbox" value="취업"> 취업·창업</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:14px;"><input type="checkbox" value="문화"> 문화·여가</label>
-      </div>
     </div>
     <button class="submit-btn" onclick="searchWelfare()">내 혜택 찾기</button>
     <div id="welfare-result"></div>
@@ -161,9 +173,7 @@ const CLAUDE_API_KEY = 'sk-ant-api03-eDdf6AllcKtsyQM4s5geeLO7ZKzfwfU72Sl768wOSYU
     <div class="form-group"><label class="form-label">도착지</label><input class="form-input" type="text" id="s-to" placeholder="예: 동탄2동 아파트"></div>
     <div class="form-group"><label class="form-label">귀가 시간대</label>
       <select class="form-input" id="s-time">
-        <option value="야간(22시~익일2시)">야간 (22시~익일 2시)</option>
-        <option value="저녁(18시~22시)">저녁 (18시~22시)</option>
-        <option value="심야(2시~6시)">심야 (2시~6시)</option>
+        <option>야간 (22시~익일 2시)</option><option>저녁 (18시~22시)</option><option>심야 (2시~6시)</option>
       </select>
     </div>
     <button class="submit-btn" onclick="searchSafe()">안심 경로 찾기</button>
@@ -177,19 +187,14 @@ const CLAUDE_API_KEY = 'sk-ant-api03-eDdf6AllcKtsyQM4s5geeLO7ZKzfwfU72Sl768wOSYU
   <div class="svc-body">
     <div class="form-group"><label class="form-label">현재 위치</label>
       <select class="form-input" id="k-location">
-        <option value="동탄1동">동탄1동</option><option value="동탄2동">동탄2동</option>
-        <option value="동탄3동">동탄3동</option><option value="동탄4동">동탄4동</option>
-        <option value="동탄5동">동탄5동</option><option value="동탄6동">동탄6동</option>
-        <option value="동탄7동">동탄7동</option><option value="동탄8동">동탄8동</option>
-        <option value="동탄9동">동탄9동</option><option value="병점동">병점동</option>
-        <option value="봉담읍">봉담읍</option><option value="향남읍">향남읍</option>
+        <option>동탄1동</option><option>동탄2동</option><option>동탄3동</option><option>동탄4동</option>
+        <option>동탄5동</option><option>동탄6동</option><option>동탄7동</option><option>동탄8동</option>
+        <option>동탄9동</option><option>병점동</option><option>봉담읍</option><option>향남읍</option>
       </select>
     </div>
     <div class="form-group"><label class="form-label">필요 서비스</label>
       <select class="form-input" id="k-type">
-        <option value="소아과">소아과 (야간·주말 포함)</option>
-        <option value="긴급돌봄">긴급 돌봄 센터</option>
-        <option value="소아응급">소아 응급실</option>
+        <option>소아과 (야간·주말 포함)</option><option>긴급 돌봄 센터</option><option>소아 응급실</option>
       </select>
     </div>
     <button class="submit-btn" onclick="searchKids()">지금 찾기</button>
@@ -203,12 +208,8 @@ const CLAUDE_API_KEY = 'sk-ant-api03-eDdf6AllcKtsyQM4s5geeLO7ZKzfwfU72Sl768wOSYU
   <div class="svc-body">
     <div class="form-group"><label class="form-label">목적지 근처 동네</label>
       <select class="form-input" id="p-location">
-        <option value="동탄역 인근">동탄역 인근</option>
-        <option value="동탄2신도시 중심">동탄2신도시 중심</option>
-        <option value="병점 중심가">병점 중심가</option>
-        <option value="봉담읍 중심">봉담읍 중심</option>
-        <option value="향남읍 중심">향남읍 중심</option>
-        <option value="화성시청 인근">화성시청 인근</option>
+        <option>동탄역 인근</option><option>동탄2신도시 중심</option><option>병점 중심가</option>
+        <option>봉담읍 중심</option><option>향남읍 중심</option><option>화성시청 인근</option>
       </select>
     </div>
     <button class="submit-btn" onclick="searchParking()">실시간 주차 확인</button>
@@ -236,24 +237,7 @@ const CLAUDE_API_KEY = 'sk-ant-api03-eDdf6AllcKtsyQM4s5geeLO7ZKzfwfU72Sl768wOSYU
 </div>
 
 <script>
-let capturedImage = null;
-let stream = null;
-
-async function callClaude(prompt, imageBase64) {
-  const content = [];
-  if (imageBase64) content.push({ type:'image', source:{ type:'base64', media_type:'image/jpeg', data:imageBase64 }});
-  content.push({ type:'text', text:prompt });
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json', 'x-api-key':CLAUDE_API_KEY, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
-      body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:1500, messages:[{role:'user',content}] })
-    });
-    const data = await res.json();
-    if (data.error) return '오류: ' + data.error.message;
-    return data.content?.[0]?.text || '응답을 받지 못했습니다.';
-  } catch(e) { return '오류: ' + e.message; }
-}
+let capturedImage = null, stream = null;
 
 function go(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -266,21 +250,15 @@ async function searchWelfare() {
   const age = document.getElementById('w-age').value;
   const family = document.getElementById('w-family').value;
   const income = document.getElementById('w-income').value;
-  const interests = [...document.querySelectorAll('#screen-welfare input[type=checkbox]:checked')].map(c=>c.value).join(', ');
   if (!age||!family||!income) { alert('모든 항목을 입력해주세요.'); return; }
-  const resultDiv = document.getElementById('welfare-result');
-  resultDiv.innerHTML = '<div class="result-box"><div class="result-loading">🔍 AI가 화성시 복지 혜택을 분석 중입니다...</div></div>';
-  const prompt = `당신은 화성시 복지 전문 AI 상담사입니다. 다음 시민 정보를 바탕으로 받을 수 있는 화성시 및 국가 복지 혜택을 안내해주세요.
-- 나이: ${age}세 / 가구 유형: ${family} / 소득: 중위소득 ${income} / 관심분야: ${interests||'전체'}
-다음 형식으로 5~8개 안내:
-■ [혜택명]
-대상: (간단히)
-혜택: (금액 또는 내용)
-신청: (신청처)
----
-마지막에 "더 자세한 정보는 화성시청(031-369-2000) 또는 복지로(bokjiro.go.kr)에서 확인하세요." 추가.`;
-  const result = await callClaude(prompt);
-  resultDiv.innerHTML = `<div class="result-box"><div class="result-content">${result}</div></div>`;
+  const div = document.getElementById('welfare-result');
+  div.innerHTML = '<div class="result-box"><div class="result-loading">🔍 분석 중...</div></div>';
+  try {
+    const result = await callClaude(`화성시 복지 전문 AI입니다. 나이 ${age}세, ${family}, ${income} 시민이 받을 수 있는 화성시 및 국가 복지혜택 5~7개를 아래 형식으로 안내해주세요.\n\n■ [혜택명]\n대상: \n혜택: \n신청: \n---\n\n마지막에 화성시청(031-369-2000), 복지로(bokjiro.go.kr) 안내 추가.`);
+    div.innerHTML = `<div class="result-box"><div class="result-content">${result}</div></div>`;
+  } catch(e) {
+    div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div>`;
+  }
 }
 
 async function searchSafe() {
@@ -288,72 +266,72 @@ async function searchSafe() {
   const to = document.getElementById('s-to').value;
   const time = document.getElementById('s-time').value;
   if (!from||!to) { alert('출발지와 도착지를 입력해주세요.'); return; }
-  const resultDiv = document.getElementById('safe-result');
-  resultDiv.innerHTML = '<div class="result-box"><div class="result-loading">🛡️ 안심 경로를 분석 중입니다...</div></div>';
+  const div = document.getElementById('safe-result');
+  div.innerHTML = '<div class="result-box"><div class="result-loading">🛡️ 분석 중...</div></div>';
   const cctv=Math.floor(Math.random()*8)+5, lights=Math.floor(Math.random()*15)+10, mins=Math.floor(Math.random()*8)+12, score=Math.floor(Math.random()*20)+78;
-  const prompt = `화성시 안전 귀가 안내 AI입니다. ${from}에서 ${to}까지 ${time} 도보 이동 시 가장 안전한 경로를 안내해주세요.
-안전점수: ${score}점 (CCTV ${cctv}개, 가로등 ${lights}개) / 예상: 도보 약 ${mins}분
-1. 권장 경로 2. 안전한 이유 3. 주의사항 4. 긴급연락처(112, 031-369-2000)`;
-  const result = await callClaude(prompt);
-  resultDiv.innerHTML = `
-    <div class="route-box">
-      <div class="route-safe-score">
-        <div class="score-circle"><div class="score-num">${score}</div><div class="score-label">안전점수</div></div>
-        <div><div style="font-size:15px;font-weight:600;margin-bottom:4px;">안심 경로 분석 완료</div><div style="font-size:13px;color:#888;">${from} → ${to}</div></div>
+  try {
+    const result = await callClaude(`화성시 안전 귀가 AI. ${from}→${to} ${time} 도보 안심경로 안내.\nCCTV ${cctv}개, 가로등 ${lights}개, 도보 ${mins}분, 안전점수 ${score}점.\n1.권장경로 2.안전이유 3.주의사항 4.긴급연락처(112, 031-369-2000)`);
+    div.innerHTML = `
+      <div class="route-box">
+        <div class="route-safe-score">
+          <div class="score-circle"><div class="score-num">${score}</div><div class="score-label">안전점수</div></div>
+          <div><div style="font-size:15px;font-weight:600;">${from} → ${to}</div><div style="font-size:13px;color:#888;">${time}</div></div>
+        </div>
+        <div class="route-stats">
+          <div class="stat-item"><div class="stat-num">${cctv}개</div><div class="stat-label">CCTV</div></div>
+          <div class="stat-item"><div class="stat-num">${lights}개</div><div class="stat-label">가로등</div></div>
+          <div class="stat-item"><div class="stat-num">${mins}분</div><div class="stat-label">도보</div></div>
+        </div>
       </div>
-      <div class="route-stats">
-        <div class="stat-item"><div class="stat-num">${cctv}개</div><div class="stat-label">CCTV</div></div>
-        <div class="stat-item"><div class="stat-num">${lights}개</div><div class="stat-label">가로등</div></div>
-        <div class="stat-item"><div class="stat-num">${mins}분</div><div class="stat-label">도보</div></div>
-      </div>
-    </div>
-    <div class="result-box"><div class="result-content">${result}</div></div>`;
+      <div class="result-box"><div class="result-content">${result}</div></div>`;
+  } catch(e) {
+    div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div>`;
+  }
 }
 
 function searchKids() {
   const loc = document.getElementById('k-location').value;
   const type = document.getElementById('k-type').value;
   const h = new Date().getHours();
-  const hospitals = [
-    {name:'동탄성심병원',addr:'동탄순환대로 180',phone:'031-8015-5000',open:true,type:'소아응급'},
+  const list = [
+    {name:'동탄성심병원',addr:'동탄순환대로 180',phone:'031-8015-5000',open:true,type:'소아 응급실'},
     {name:'동탄제일소아청소년과',addr:'동탄대로 607',phone:'031-8015-1234',open:h<21&&h>8,type:'소아과'},
     {name:'아이튼튼소아청소년과',addr:'동탄순환대로 754',phone:'031-8015-5678',open:h<20&&h>9,type:'소아과'},
-    {name:'화성시육아종합지원센터',addr:'동탄대로21길 24',phone:'031-8015-9999',open:h<18&&h>9,type:'긴급돌봄'},
-    {name:'동탄어린이병원',addr:'동탄반석로 135',phone:'031-8015-7777',open:true,type:'소아응급'},
+    {name:'화성시육아종합지원센터',addr:'동탄대로21길 24',phone:'031-8015-9999',open:h<18&&h>9,type:'긴급 돌봄 센터'},
+    {name:'동탄어린이병원',addr:'동탄반석로 135',phone:'031-8015-7777',open:true,type:'소아 응급실'},
   ];
-  const filtered = type==='소아과'?hospitals.filter(h=>h.type==='소아과'):type==='긴급돌봄'?hospitals.filter(h=>h.type==='긴급돌봄'):hospitals.filter(h=>h.type==='소아응급');
-  const show = filtered.length?filtered:hospitals.slice(0,3);
+  const show = list.filter(i=>i.type.includes(type.split(' ')[0])).slice(0,3) || list.slice(0,3);
   document.getElementById('kids-result').innerHTML = `
-    <div class="map-box"><div class="map-icon">🗺️</div><div class="map-text">${loc} 주변 ${type} 검색 결과</div><div style="font-size:12px;color:#93c5fd;margin-top:4px;">현재 시각 기준 진료 가능 여부 표시</div></div>
-    ${show.map(p=>`<div class="result-item">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+    <div class="map-box"><div class="map-icon">🗺️</div><div class="map-text">${loc} 주변 ${type}</div></div>
+    ${(show.length?show:list.slice(0,3)).map(p=>`<div class="result-item">
+      <div style="display:flex;justify-content:space-between;">
         <div class="result-item-title">${p.name}</div>
         <span class="result-item-badge ${p.open?'badge-open':'badge-close'}">${p.open?'진료중':'진료종료'}</span>
       </div>
-      <div class="result-item-sub">${p.addr} · ${p.type}</div>
-      <button class="result-item-btn" onclick="window.location.href='tel:${p.phone}'">📞 ${p.phone} 전화하기</button>
+      <div class="result-item-sub">${p.addr}</div>
+      <button class="result-item-btn" onclick="location.href='tel:${p.phone}'">📞 ${p.phone}</button>
     </div>`).join('')}`;
 }
 
 function searchParking() {
   const loc = document.getElementById('p-location').value;
   const lots = [
-    {name:'동탄역 공영주차장',total:320,avail:Math.floor(Math.random()*80)+10,dist:'도보 3분',fee:'최초 30분 무료'},
+    {name:'동탄역 공영주차장',total:320,avail:Math.floor(Math.random()*80)+10,dist:'도보 3분',fee:'30분 무료'},
     {name:'동탄2동 공영주차장',total:150,avail:Math.floor(Math.random()*50),dist:'도보 5분',fee:'30분 500원'},
-    {name:'동탄복합문화센터 주차장',total:200,avail:Math.floor(Math.random()*100)+20,dist:'도보 7분',fee:'1시간 무료'},
+    {name:'동탄문화센터 주차장',total:200,avail:Math.floor(Math.random()*100)+20,dist:'도보 7분',fee:'1시간 무료'},
   ];
   document.getElementById('parking-result').innerHTML = `
-    <div class="map-box"><div class="map-icon">🅿️</div><div class="map-text">${loc} 실시간 주차 현황</div><div style="font-size:12px;color:#93c5fd;margin-top:4px;">화성시 통합주차관제시스템 연동</div></div>
+    <div class="map-box"><div class="map-icon">🅿️</div><div class="map-text">${loc} 실시간 주차현황</div></div>
     ${lots.map(p=>{const pct=Math.round((p.avail/p.total)*100);return`<div class="result-item">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div style="display:flex;justify-content:space-between;">
         <div class="result-item-title">${p.name}</div>
         <span class="result-item-badge ${p.avail>0?'badge-avail':'badge-full'}">${p.avail>0?p.avail+'면 가능':'만차'}</span>
       </div>
       <div class="result-item-sub">${p.dist} · ${p.fee}</div>
       <div style="background:#f3f4f6;border-radius:6px;height:6px;margin:8px 0;"><div style="background:${pct>30?'#3b82f6':'#ef4444'};height:6px;border-radius:6px;width:${100-pct}%;"></div></div>
       <div style="font-size:11px;color:#888;margin-bottom:8px;">점유율 ${100-pct}% · 전체 ${p.total}면</div>
-      <button class="result-item-btn" onclick="alert('카카오맵 길찾기로 연결됩니다.')">🗺️ 길찾기</button>
-    </div>`;}).join('')}`;
+      <button class="result-item-btn" onclick="alert('카카오맵으로 연결됩니다.')">🗺️ 길찾기</button>
+    </div>`}).join('')}`;
 }
 
 function startCamera() {
@@ -366,35 +344,32 @@ function startCamera() {
       .then(s=>{stream=s;document.getElementById('cam-video').srcObject=s;})
       .catch(()=>alert('카메라 접근 권한이 필요합니다.')));
 }
-
-function stopCamera() { if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;} }
-
-function snapPhoto() {
-  const video=document.getElementById('cam-video'), canvas=document.getElementById('cam-canvas'), preview=document.getElementById('cam-preview');
-  canvas.width=video.videoWidth; canvas.height=video.videoHeight;
-  canvas.getContext('2d').drawImage(video,0,0);
-  capturedImage=canvas.toDataURL('image/jpeg',0.8).split(',')[1];
-  preview.src=canvas.toDataURL('image/jpeg',0.8);
-  preview.style.display='block';
+function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
+function snapPhoto(){
+  const v=document.getElementById('cam-video'),c=document.getElementById('cam-canvas'),p=document.getElementById('cam-preview');
+  c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
+  capturedImage=c.toDataURL('image/jpeg',0.8).split(',')[1];
+  p.src=c.toDataURL('image/jpeg',0.8);p.style.display='block';
   document.getElementById('cam-wrap').style.display='none';
   document.getElementById('cam-actions').style.display='flex';
   stopCamera();
 }
-
-function retakePhoto() {
+function retakePhoto(){
   document.getElementById('cam-preview').style.display='none';
   document.getElementById('cam-actions').style.display='none';
   document.getElementById('camera-result').innerHTML='';
-  capturedImage=null; startCamera();
+  capturedImage=null;startCamera();
 }
-
-async function analyzePhoto() {
+async function analyzePhoto(){
   if(!capturedImage){alert('먼저 사진을 찍어주세요.');return;}
-  const resultDiv=document.getElementById('camera-result');
-  resultDiv.innerHTML='<div class="result-box"><div class="result-loading">🤖 AI가 기기를 분석 중입니다...</div></div>';
-  const prompt=`이 사진의 기기(키오스크, ATM 등) 사용법을 안내해주세요. 1.기기 종류 2.주요 기능/버튼 3.사용 순서(단계별) 4.주의사항. 어르신도 쉽게 이해할 수 있게 친절하게 설명해주세요.`;
-  const result=await callClaude(prompt,capturedImage);
-  resultDiv.innerHTML=`<div class="result-box"><div class="result-content">${result}</div></div>`;
+  const div=document.getElementById('camera-result');
+  div.innerHTML='<div class="result-box"><div class="result-loading">🤖 분석 중...</div></div>';
+  try {
+    const result=await callClaude('이 기기(키오스크/ATM 등) 사용법을 어르신도 알 수 있게 단계별로 친절히 설명해주세요. 1.기기종류 2.주요버튼 3.사용순서 4.주의사항',capturedImage);
+    div.innerHTML=`<div class="result-box"><div class="result-content">${result}</div></div>`;
+  } catch(e){
+    div.innerHTML=`<div class="result-box"><div class="result-content">오류: ${e.message}</div></div>`;
+  }
 }
 </script>
 </body>
