@@ -276,13 +276,26 @@ async function searchSafe() {
 
   const cctv=Math.floor(Math.random()*8)+5, lights=Math.floor(Math.random()*15)+10, mins=Math.floor(Math.random()*8)+12, score=Math.floor(Math.random()*20)+78;
 
-  // 카카오맵 링크 (좌표 없어도 작동)
+  // 카카오맵 기본 링크
   const kakaoMapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(to)}`;
 
   try {
     const result = await callClaude(`화성시 안전 귀가 AI. ${from}→${to} ${time} 도보 안심경로 안내.
 CCTV ${cctv}개, 가로등 ${lights}개, 도보 ${mins}분, 안전점수 ${score}점.
-1.권장경로(경유지 포함) 2.안전이유(CCTV·가로등·편의점 등) 3.주의사항 4.긴급연락처(112, 031-369-2000)`);
+
+반드시 아래 형식으로 경유지를 포함해주세요 (실제 존재하는 장소명, 최대 3개):
+[경유지: 장소1, 장소2, 장소3]
+
+그 다음 상세 안내:
+1.권장경로 설명 2.안전이유(CCTV·가로등·편의점 등) 3.주의사항 4.긴급연락처(112, 031-369-2000)`);
+
+    // 경유지 파싱
+    let waypoints = [];
+    const wpMatch = result.match(/\[경유지:\s*([^\]]+)\]/);
+    if (wpMatch) {
+      waypoints = wpMatch[1].split(',').map(w => w.trim()).filter(w => w);
+    }
+    const cleanResult = result.replace(/\[경유지:[^\]]+\]/g, '').trim();
 
     div.innerHTML = `
       <div class="route-box">
@@ -296,22 +309,69 @@ CCTV ${cctv}개, 가로등 ${lights}개, 도보 ${mins}분, 안전점수 ${score
           <div class="stat-item"><div class="stat-num">${mins}분</div><div class="stat-label">도보</div></div>
         </div>
       </div>
-      <div class="result-box"><div class="result-content">${result}</div></div>
-      <a class="kakao-btn" href="${kakaoMapUrl}" target="_blank">🗺️ 카카오맵으로 도보 길찾기</a>`;
+      <div class="result-box"><div class="result-content">${cleanResult}</div></div>
+      <a id="kakao-link" class="kakao-btn" href="${kakaoMapUrl}" target="_blank">🗺️ 카카오맵으로 도보 길찾기</a>`;
 
-    // 지도 표시 시도
+    // 좌표 찾아서 카카오맵 앱 딥링크 업데이트
     try {
       const [fromCoords, toCoords] = await Promise.all([getCoords(from), getCoords(to)]);
+
+      // 경유지 좌표 가져오기
+      const wpCoordsList = [];
+      for (const wp of waypoints) {
+        try {
+          const wpCoords = await getCoords(wp);
+          wpCoordsList.push({name: wp, ...wpCoords});
+        } catch(e) {}
+      }
+
+      // 카카오맵 앱 딥링크 (경유지 포함)
+      let viaParams = wpCoordsList.map(wp => `via=${wp.lat},${wp.lng}`).join('&');
+      const kakaoAppUrl = `kakaomap://route?sp=${fromCoords.lat},${fromCoords.lng}&ep=${toCoords.lat},${toCoords.lng}${viaParams ? '&' + viaParams : ''}&by=FOOT`;
+      
+      // 웹 링크 (출발지·도착지 포함)
+      const kakaoWebUrl = `https://map.kakao.com/link/to/${encodeURIComponent(to)},${toCoords.lat},${toCoords.lng}/from/${encodeURIComponent(from)},${fromCoords.lat},${fromCoords.lng}`;
+
+      // 모바일이면 앱 딥링크, 아니면 웹
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const linkEl = document.getElementById('kakao-link');
+      if (linkEl) {
+        if (isMobile) {
+          linkEl.href = kakaoAppUrl;
+          // 앱 없으면 웹으로 폴백
+          linkEl.onclick = function(e) {
+            e.preventDefault();
+            const timeout = setTimeout(() => { window.location.href = kakaoWebUrl; }, 1500);
+            window.location.href = kakaoAppUrl;
+            window.addEventListener('blur', () => clearTimeout(timeout), {once: true});
+          };
+        } else {
+          linkEl.href = kakaoWebUrl;
+        }
+      }
+
+      // 지도 표시
       mapDiv.style.display = 'block';
       const center = new kakao.maps.LatLng((fromCoords.lat+toCoords.lat)/2, (fromCoords.lng+toCoords.lng)/2);
       const map = new kakao.maps.Map(mapDiv, {center, level:5});
       new kakao.maps.Marker({map, position: new kakao.maps.LatLng(fromCoords.lat, fromCoords.lng)});
       new kakao.maps.Marker({map, position: new kakao.maps.LatLng(toCoords.lat, toCoords.lng)});
+      
+      // 경유지 마커
+      for (const wp of wpCoordsList) {
+        new kakao.maps.Marker({map, position: new kakao.maps.LatLng(wp.lat, wp.lng)});
+        new kakao.maps.InfoWindow({
+          position: new kakao.maps.LatLng(wp.lat, wp.lng),
+          content: `<div style="padding:3px 6px;font-size:11px;color:#555;">📍 ${wp.name}</div>`
+        }).open(map);
+      }
+
       new kakao.maps.Polyline({map, path:[new kakao.maps.LatLng(fromCoords.lat,fromCoords.lng),new kakao.maps.LatLng(toCoords.lat,toCoords.lng)], strokeWeight:5, strokeColor:'#2563eb', strokeOpacity:0.8});
       new kakao.maps.InfoWindow({position:new kakao.maps.LatLng(fromCoords.lat,fromCoords.lng), content:'<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#2563eb;">🚶 출발</div>'}).open(map);
       new kakao.maps.InfoWindow({position:new kakao.maps.LatLng(toCoords.lat,toCoords.lng), content:'<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#dc2626;">🏠 도착</div>'}).open(map);
+
     } catch(mapErr) {
-      // 지도 실패해도 AI 결과와 카카오맵 버튼은 유지
+      // 지도 실패해도 AI 결과와 카카오맵 버튼 유지
     }
 
   } catch(e) {
