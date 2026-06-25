@@ -24,11 +24,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Apple SD Gothic Ne
 .tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;width:fit-content;margin-bottom:2px;}
 .card-title{font-size:15px;font-weight:600;color:#1a1a1a;}
 .card-desc{font-size:12px;color:#888;line-height:1.5;}
-.c-blue .icon-wrap{background:#eff6ff;} .c-blue .tag{background:#dbeafe;color:#1d4ed8;}
-.c-red .icon-wrap{background:#fff1f2;} .c-red .tag{background:#fee2e2;color:#dc2626;}
-.c-green .icon-wrap{background:#f0fdf4;} .c-green .tag{background:#dcfce7;color:#16a34a;}
-.c-amber .icon-wrap{background:#fffbeb;} .c-amber .tag{background:#fef3c7;color:#d97706;}
-.c-purple .icon-wrap{background:#faf5ff;} .c-purple .tag{background:#ede9fe;color:#7c3aed;}
+.c-blue .icon-wrap{background:#eff6ff;}.c-blue .tag{background:#dbeafe;color:#1d4ed8;}
+.c-red .icon-wrap{background:#fff1f2;}.c-red .tag{background:#fee2e2;color:#dc2626;}
+.c-green .icon-wrap{background:#f0fdf4;}.c-green .tag{background:#dcfce7;color:#16a34a;}
+.c-amber .icon-wrap{background:#fffbeb;}.c-amber .tag{background:#fef3c7;color:#d97706;}
+.c-purple .icon-wrap{background:#faf5ff;}.c-purple .tag{background:#ede9fe;color:#7c3aed;}
 .screen{display:none;}
 .screen.active{display:block;}
 .svc-header{background:#fff;padding:16px 20px;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;}
@@ -44,6 +44,7 @@ select.form-input{background:#fff;}
 .result-box{background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:18px;margin-top:16px;}
 .result-loading{text-align:center;padding:30px;color:#888;font-size:14px;}
 .result-content{font-size:14px;line-height:1.8;color:#1a1a1a;white-space:pre-wrap;}
+.kakao-btn{display:block;width:100%;padding:14px;background:#FEE500;color:#000;border:none;border-radius:10px;font-size:15px;font-weight:600;text-align:center;margin-top:12px;text-decoration:none;cursor:pointer;}
 .map-box{background:#e8f0fe;border-radius:14px;padding:30px;text-align:center;margin-bottom:14px;border:1px dashed #93c5fd;}
 .map-icon{font-size:36px;margin-bottom:8px;}
 .map-text{font-size:13px;color:#3b82f6;font-weight:500;}
@@ -65,7 +66,7 @@ select.form-input{background:#fff;}
 .stat-item{background:#f8f8f8;border-radius:8px;padding:8px;text-align:center;}
 .stat-num{font-size:16px;font-weight:600;}
 .stat-label{font-size:10px;color:#888;margin-top:2px;}
-#kakao-map{width:100%;height:350px;border-radius:14px;margin-top:16px;border:1px solid #e8e8e8;display:none;}
+#kakao-map{width:100%;height:350px;border-radius:14px;margin-top:16px;border:1px solid #e8e8e8;}
 .cam-wrap{background:#000;border-radius:14px;overflow:hidden;position:relative;margin-bottom:14px;}
 #cam-video{width:100%;display:block;max-height:300px;object-fit:cover;}
 .cam-overlay{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);}
@@ -76,7 +77,6 @@ select.form-input{background:#fff;}
 </head>
 <body>
 
-<!-- 메인 홈 -->
 <div id="screen-home" class="screen active">
   <div class="header">
     <div class="logo">H<span>LIFE</span></div>
@@ -111,7 +111,6 @@ select.form-input{background:#fff;}
   </div>
 </div>
 
-<!-- 복지 알리미 -->
 <div id="screen-welfare" class="screen">
   <div class="svc-header"><div class="back-btn" onclick="go('home')">‹</div><div class="svc-title">💰 복지 알리미</div></div>
   <div class="svc-body">
@@ -134,12 +133,11 @@ select.form-input{background:#fff;}
   </div>
 </div>
 
-<!-- 세이프패스 -->
 <div id="screen-safe" class="screen">
   <div class="svc-header"><div class="back-btn" onclick="go('home')">‹</div><div class="svc-title">🛡️ 세이프패스</div></div>
   <div class="svc-body">
-    <div class="form-group"><label class="form-label">출발지</label><input class="form-input" type="text" id="s-from" placeholder="예: 동탄역, 신동탄포레자이"></div>
-    <div class="form-group"><label class="form-label">도착지</label><input class="form-input" type="text" id="s-to" placeholder="예: 동탄2동 주민센터"></div>
+    <div class="form-group"><label class="form-label">출발지</label><input class="form-input" type="text" id="s-from" placeholder="예: 신동탄포레자이, 동탄역"></div>
+    <div class="form-group"><label class="form-label">도착지</label><input class="form-input" type="text" id="s-to" placeholder="예: 망포역, 동탄2동 주민센터"></div>
     <div class="form-group"><label class="form-label">귀가 시간대</label>
       <select class="form-input" id="s-time">
         <option>야간 (22시~익일 2시)</option><option>저녁 (18시~22시)</option><option>심야 (2시~6시)</option>
@@ -147,11 +145,10 @@ select.form-input{background:#fff;}
     </div>
     <button class="submit-btn" onclick="searchSafe()">안심 경로 찾기</button>
     <div id="safe-result"></div>
-    <div id="kakao-map"></div>
+    <div id="kakao-map" style="display:none;"></div>
   </div>
 </div>
 
-<!-- 아이케어 맵 -->
 <div id="screen-kids" class="screen">
   <div class="svc-header"><div class="back-btn" onclick="go('home')">‹</div><div class="svc-title">🏥 아이케어 맵</div></div>
   <div class="svc-body">
@@ -172,7 +169,6 @@ select.form-input{background:#fff;}
   </div>
 </div>
 
-<!-- 스마트 주차 -->
 <div id="screen-parking" class="screen">
   <div class="svc-header"><div class="back-btn" onclick="go('home')">‹</div><div class="svc-title">🅿️ 스마트 주차</div></div>
   <div class="svc-body">
@@ -187,7 +183,6 @@ select.form-input{background:#fff;}
   </div>
 </div>
 
-<!-- AI 기기 안내 -->
 <div id="screen-camera" class="screen">
   <div class="svc-header"><div class="back-btn" onclick="go('home');stopCamera()">‹</div><div class="svc-title">📷 AI 기기 안내</div></div>
   <div class="svc-body">
@@ -206,7 +201,6 @@ select.form-input{background:#fff;}
   </div>
 </div>
 
-<!-- 카카오맵 SDK는 body 끝에 로드 -->
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e3f66d17f6a9d48e4183e0c8454051fd&libraries=services"></script>
 
 <script>
@@ -229,25 +223,19 @@ async function callClaude(prompt, imageBase64) {
 
 function getCoords(address) {
   return new Promise((resolve, reject) => {
-    const geocoder = new kakao.maps.services.Geocoder();
-    geocoder.addressSearch(address, (result, status) => {
+    const ps = new kakao.maps.services.Places();
+    ps.keywordSearch(address, (result, status) => {
       if (status === kakao.maps.services.Status.OK) {
         resolve({lat: parseFloat(result[0].y), lng: parseFloat(result[0].x)});
       } else {
-        const places = new kakao.maps.services.Places();
-        places.keywordSearch(address, (result2, status2) => {
+        const geocoder = new kakao.maps.services.Geocoder();
+        geocoder.addressSearch(address, (result2, status2) => {
           if (status2 === kakao.maps.services.Status.OK) {
             resolve({lat: parseFloat(result2[0].y), lng: parseFloat(result2[0].x)});
           } else {
-            places.keywordSearch(address + ' 역', (result3, status3) => {
-              if (status3 === kakao.maps.services.Status.OK) {
-                resolve({lat: parseFloat(result3[0].y), lng: parseFloat(result3[0].x)});
-              } else {
-                reject(new Error('위치를 찾을 수 없습니다: ' + address));
-              }
-            }, {location: new kakao.maps.LatLng(37.2, 127.0), radius: 30000});
+            reject(new Error('위치를 찾을 수 없습니다: ' + address));
           }
-        }, {location: new kakao.maps.LatLng(37.2, 127.0), radius: 30000});
+        });
       }
     });
   });
@@ -280,43 +268,21 @@ async function searchSafe() {
   const to = document.getElementById('s-to').value;
   const time = document.getElementById('s-time').value;
   if (!from||!to) { alert('출발지와 도착지를 입력해주세요.'); return; }
+
   const div = document.getElementById('safe-result');
   const mapDiv = document.getElementById('kakao-map');
-  div.innerHTML = '<div class="result-box"><div class="result-loading">🛡️ 안심 경로 분석 중...</div></div>';
   mapDiv.style.display = 'none';
+  div.innerHTML = '<div class="result-box"><div class="result-loading">🛡️ 안심 경로 분석 중...</div></div>';
 
   const cctv=Math.floor(Math.random()*8)+5, lights=Math.floor(Math.random()*15)+10, mins=Math.floor(Math.random()*8)+12, score=Math.floor(Math.random()*20)+78;
 
+  // 카카오맵 링크 (좌표 없어도 작동)
+  const kakaoMapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(to)}`;
+
   try {
-    const [aiResponse, fromCoords, toCoords] = await Promise.all([
-      callClaude(`화성시 안전 귀가 AI. ${from}→${to} ${time} 도보 안심경로 안내.
+    const result = await callClaude(`화성시 안전 귀가 AI. ${from}→${to} ${time} 도보 안심경로 안내.
 CCTV ${cctv}개, 가로등 ${lights}개, 도보 ${mins}분, 안전점수 ${score}점.
-
-반드시 아래 형식을 포함해서 답변해주세요:
-
-[WAYPOINTS]
-경유지1|경유지2|경유지3
-[/WAYPOINTS]
-
-(경유지는 실제 존재하는 장소명, 최대 3개, | 로 구분)
-
-그 다음 안심경로 상세 안내:
-1.권장경로 2.안전이유(CCTV·가로등·편의점 등) 3.주의사항 4.긴급연락처(112, 031-369-2000)`),
-      getCoords(from),
-      getCoords(to)
-    ]);
-
-    // 경유지 파싱
-    let waypoints = [];
-    const wpMatch = aiResponse.match(/\[WAYPOINTS\]([\s\S]*?)\[\/WAYPOINTS\]/);
-    if (wpMatch) {
-      waypoints = wpMatch[1].trim().split('|').map(w=>w.trim()).filter(w=>w);
-    }
-    const result = aiResponse.replace(/\[WAYPOINTS\][\s\S]*?\[\/WAYPOINTS\]/g, '').trim();
-
-    // 카카오맵 경유지 URL 생성
-    let kakaoUrl = `kakaomap://route?sp=${fromCoords.lat},${fromCoords.lng}&ep=${toCoords.lat},${toCoords.lng}&by=FOOT`;
-    let kakaoWebUrl = `https://map.kakao.com/link/to/${encodeURIComponent(to)},${toCoords.lat},${toCoords.lng}/from/${encodeURIComponent(from)},${fromCoords.lat},${fromCoords.lng}`;
+1.권장경로(경유지 포함) 2.안전이유(CCTV·가로등·편의점 등) 3.주의사항 4.긴급연락처(112, 031-369-2000)`);
 
     div.innerHTML = `
       <div class="route-box">
@@ -331,63 +297,26 @@ CCTV ${cctv}개, 가로등 ${lights}개, 도보 ${mins}분, 안전점수 ${score
         </div>
       </div>
       <div class="result-box"><div class="result-content">${result}</div></div>
-    } catch(e) {
-    const kakaoFallbackUrl = `https://map.kakao.com/link/to/${encodeURIComponent(to)}`;
-    div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div><a href="${kakaoFallbackUrl}" target="_blank" style="display:block;width:100%;padding:14px;background:#FEE500;color:#000;border-radius:10px;font-size:15px;font-weight:600;text-align:center;margin-top:12px;text-decoration:none;">🗺️ 카카오맵으로 도보 길찾기</a>`;
-  }
-}
+      <a class="kakao-btn" href="${kakaoMapUrl}" target="_blank">🗺️ 카카오맵으로 도보 길찾기</a>`;
 
-    // 지도 표시
-    mapDiv.style.display = 'block';
-    const center = new kakao.maps.LatLng(
-      (fromCoords.lat + toCoords.lat) / 2,
-      (fromCoords.lng + toCoords.lng) / 2
-    );
-    const map = new kakao.maps.Map(mapDiv, {center, level: 5});
-
-    new kakao.maps.Marker({map, position: new kakao.maps.LatLng(fromCoords.lat, fromCoords.lng)});
-    new kakao.maps.Marker({map, position: new kakao.maps.LatLng(toCoords.lat, toCoords.lng)});
-
-    // 경유지 마커
-    for (const wp of waypoints) {
-      try {
-        const wpCoords = await getCoords(wp);
-        new kakao.maps.Marker({
-          map,
-          position: new kakao.maps.LatLng(wpCoords.lat, wpCoords.lng),
-          title: wp
-        });
-        new kakao.maps.InfoWindow({
-          position: new kakao.maps.LatLng(wpCoords.lat, wpCoords.lng),
-          content: `<div style="padding:3px 6px;font-size:11px;color:#555;">📍 ${wp}</div>`
-        }).open(map);
-      } catch(e) {}
+    // 지도 표시 시도
+    try {
+      const [fromCoords, toCoords] = await Promise.all([getCoords(from), getCoords(to)]);
+      mapDiv.style.display = 'block';
+      const center = new kakao.maps.LatLng((fromCoords.lat+toCoords.lat)/2, (fromCoords.lng+toCoords.lng)/2);
+      const map = new kakao.maps.Map(mapDiv, {center, level:5});
+      new kakao.maps.Marker({map, position: new kakao.maps.LatLng(fromCoords.lat, fromCoords.lng)});
+      new kakao.maps.Marker({map, position: new kakao.maps.LatLng(toCoords.lat, toCoords.lng)});
+      new kakao.maps.Polyline({map, path:[new kakao.maps.LatLng(fromCoords.lat,fromCoords.lng),new kakao.maps.LatLng(toCoords.lat,toCoords.lng)], strokeWeight:5, strokeColor:'#2563eb', strokeOpacity:0.8});
+      new kakao.maps.InfoWindow({position:new kakao.maps.LatLng(fromCoords.lat,fromCoords.lng), content:'<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#2563eb;">🚶 출발</div>'}).open(map);
+      new kakao.maps.InfoWindow({position:new kakao.maps.LatLng(toCoords.lat,toCoords.lng), content:'<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#dc2626;">🏠 도착</div>'}).open(map);
+    } catch(mapErr) {
+      // 지도 실패해도 AI 결과와 카카오맵 버튼은 유지
     }
 
-    new kakao.maps.Polyline({
-      map,
-      path: [
-        new kakao.maps.LatLng(fromCoords.lat, fromCoords.lng),
-        new kakao.maps.LatLng(toCoords.lat, toCoords.lng)
-      ],
-      strokeWeight: 5,
-      strokeColor: '#2563eb',
-      strokeOpacity: 0.8
-    });
-
-    new kakao.maps.InfoWindow({
-      position: new kakao.maps.LatLng(fromCoords.lat, fromCoords.lng),
-      content: '<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#2563eb;">🚶 출발</div>'
-    }).open(map);
-
-    new kakao.maps.InfoWindow({
-      } catch(e) {
-    const kakaoFallbackUrl = `https://map.kakao.com/link/to/${encodeURIComponent(to)}`;
-    div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div><a href="${kakaoFallbackUrl}" target="_blank" style="display:block;width:100%;padding:14px;background:#FEE500;color:#000;border-radius:10px;font-size:15px;font-weight:600;text-align:center;margin-top:12px;text-decoration:none;">🗺️ 카카오맵으로 도보 길찾기</a>`;
-  }
-
   } catch(e) {
-    div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div>`;
+    div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div>
+      <a class="kakao-btn" href="${kakaoMapUrl}" target="_blank">🗺️ 카카오맵으로 도보 길찾기</a>`;
   }
 }
 
