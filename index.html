@@ -331,7 +331,11 @@ CCTV ${cctv}개, 가로등 ${lights}개, 도보 ${mins}분, 안전점수 ${score
         </div>
       </div>
       <div class="result-box"><div class="result-content">${result}</div></div>
-      <a href="${kakaoWebUrl}" target="_blank" style="display:block;width:100%;padding:14px;background:#FEE500;color:#000;border-radius:10px;font-size:15px;font-weight:600;text-align:center;margin-top:12px;text-decoration:none;">🗺️ 카카오맵으로 도보 길찾기</a>`;
+    } catch(e) {
+    const kakaoFallbackUrl = `https://map.kakao.com/link/to/${encodeURIComponent(to)}`;
+    div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div><a href="${kakaoFallbackUrl}" target="_blank" style="display:block;width:100%;padding:14px;background:#FEE500;color:#000;border-radius:10px;font-size:15px;font-weight:600;text-align:center;margin-top:12px;text-decoration:none;">🗺️ 카카오맵으로 도보 길찾기</a>`;
+  }
+}
 
     // 지도 표시
     mapDiv.style.display = 'block';
