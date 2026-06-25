@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HLIFE — 화성시민 AI 생활플랫폼</title>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e3f66d17f6a9d48e4183e0c8454051fd&libraries=services"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh;}
@@ -61,10 +62,11 @@ select.form-input{background:#fff;}
 .score-circle{width:56px;height:56px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0;}
 .score-num{font-size:18px;font-weight:700;color:#16a34a;}
 .score-label{font-size:9px;color:#16a34a;}
-.route-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.route-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
 .stat-item{background:#f8f8f8;border-radius:8px;padding:8px;text-align:center;}
 .stat-num{font-size:16px;font-weight:600;}
 .stat-label{font-size:10px;color:#888;margin-top:2px;}
+#kakao-map{width:100%;height:350px;border-radius:14px;margin-top:16px;border:1px solid #e8e8e8;}
 .cam-wrap{background:#000;border-radius:14px;overflow:hidden;position:relative;margin-bottom:14px;}
 #cam-video{width:100%;display:block;max-height:300px;object-fit:cover;}
 .cam-overlay{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);}
@@ -76,29 +78,43 @@ select.form-input{background:#fff;}
 <body>
 
 <script>
-// Cloudflare Workers URL (API 키가 서버에 안전하게 저장됨)
 const WORKER_URL = 'https://hlife-api.gam1189.workers.dev';
+const KAKAO_API_KEY = 'e3f66d17f6a9d48e4183e0c8454051fd';
 
 async function callClaude(prompt, imageBase64) {
   const content = [];
-  if (imageBase64) {
-    content.push({type:'image', source:{type:'base64', media_type:'image/jpeg', data:imageBase64}});
-  }
+  if (imageBase64) content.push({type:'image', source:{type:'base64', media_type:'image/jpeg', data:imageBase64}});
   content.push({type:'text', text:prompt});
-
   const res = await fetch(WORKER_URL, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1500,
-      messages: [{role:'user', content}]
-    })
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-6', max_tokens:1500, messages:[{role:'user',content}]})
   });
-
   const data = await res.json();
   if (!res.ok) throw new Error(data.error?.message || '오류 발생');
   return data.content[0].text;
+}
+
+// 주소를 좌표로 변환
+function getCoords(address) {
+  return new Promise((resolve, reject) => {
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch(address, (result, status) => {
+      if (status === kakao.maps.services.Status.OK) {
+        resolve({lat: parseFloat(result[0].y), lng: parseFloat(result[0].x)});
+      } else {
+        // 키워드 검색으로 재시도
+        const places = new kakao.maps.services.Places();
+        places.keywordSearch(address, (result2, status2) => {
+          if (status2 === kakao.maps.services.Status.OK) {
+            resolve({lat: parseFloat(result2[0].y), lng: parseFloat(result2[0].x)});
+          } else {
+            reject(new Error('주소를 찾을 수 없습니다: ' + address));
+          }
+        });
+      }
+    });
+  });
 }
 </script>
 
@@ -164,8 +180,8 @@ async function callClaude(prompt, imageBase64) {
 <div id="screen-safe" class="screen">
   <div class="svc-header"><div class="back-btn" onclick="go('home')">‹</div><div class="svc-title">🛡️ 세이프패스</div></div>
   <div class="svc-body">
-    <div class="form-group"><label class="form-label">출발지</label><input class="form-input" type="text" id="s-from" placeholder="예: 동탄역"></div>
-    <div class="form-group"><label class="form-label">도착지</label><input class="form-input" type="text" id="s-to" placeholder="예: 동탄2동 아파트"></div>
+    <div class="form-group"><label class="form-label">출발지</label><input class="form-input" type="text" id="s-from" placeholder="예: 동탄역, 신동탄포레자이"></div>
+    <div class="form-group"><label class="form-label">도착지</label><input class="form-input" type="text" id="s-to" placeholder="예: 동탄2동 주민센터"></div>
     <div class="form-group"><label class="form-label">귀가 시간대</label>
       <select class="form-input" id="s-time">
         <option>야간 (22시~익일 2시)</option><option>저녁 (18시~22시)</option><option>심야 (2시~6시)</option>
@@ -173,6 +189,7 @@ async function callClaude(prompt, imageBase64) {
     </div>
     <button class="submit-btn" onclick="searchSafe()">안심 경로 찾기</button>
     <div id="safe-result"></div>
+    <div id="kakao-map" style="display:none;"></div>
   </div>
 </div>
 
@@ -232,7 +249,7 @@ async function callClaude(prompt, imageBase64) {
 </div>
 
 <script>
-let capturedImage = null, stream = null;
+let capturedImage = null, stream = null, kakaoMap = null;
 
 function go(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -262,10 +279,20 @@ async function searchSafe() {
   const time = document.getElementById('s-time').value;
   if (!from||!to) { alert('출발지와 도착지를 입력해주세요.'); return; }
   const div = document.getElementById('safe-result');
-  div.innerHTML = '<div class="result-box"><div class="result-loading">🛡️ 분석 중...</div></div>';
+  const mapDiv = document.getElementById('kakao-map');
+  div.innerHTML = '<div class="result-box"><div class="result-loading">🛡️ 안심 경로 분석 중...</div></div>';
+  mapDiv.style.display = 'none';
+
   const cctv=Math.floor(Math.random()*8)+5, lights=Math.floor(Math.random()*15)+10, mins=Math.floor(Math.random()*8)+12, score=Math.floor(Math.random()*20)+78;
+
   try {
-    const result = await callClaude(`화성시 안전 귀가 AI. ${from}→${to} ${time} 도보 안심경로 안내.\nCCTV ${cctv}개, 가로등 ${lights}개, 도보 ${mins}분, 안전점수 ${score}점.\n1.권장경로 2.안전이유 3.주의사항 4.긴급연락처(112, 031-369-2000)`);
+    // AI 분석과 좌표 변환 동시 실행
+    const [result, fromCoords, toCoords] = await Promise.all([
+      callClaude(`화성시 안전 귀가 AI. ${from}→${to} ${time} 도보 안심경로 안내.\nCCTV ${cctv}개, 가로등 ${lights}개, 도보 ${mins}분, 안전점수 ${score}점.\n1.권장경로 2.안전이유 3.주의사항 4.긴급연락처(112, 031-369-2000)`),
+      getCoords(from + ' 화성시'),
+      getCoords(to + ' 화성시')
+    ]);
+
     div.innerHTML = `
       <div class="route-box">
         <div class="route-safe-score">
@@ -278,8 +305,55 @@ async function searchSafe() {
           <div class="stat-item"><div class="stat-num">${mins}분</div><div class="stat-label">도보</div></div>
         </div>
       </div>
-      <div class="result-box"><div class="result-content">${result}</div></div>
-      <a href="${'https://map.naver.com/v5/directions/-/'+encodeURIComponent(from)+'/-/'+encodeURIComponent(to)+'/-/walk'}" target="_blank" style="display:block;width:100%;padding:14px;background:#03C75A;color:#fff;border-radius:10px;font-size:15px;font-weight:600;text-align:center;margin-top:12px;text-decoration:none;">🗺️ 네이버 지도에서 경로 확인</a>\`;
+      <div class="result-box"><div class="result-content">${result}</div></div>`;
+
+    // 지도 표시
+    mapDiv.style.display = 'block';
+    const center = new kakao.maps.LatLng(
+      (fromCoords.lat + toCoords.lat) / 2,
+      (fromCoords.lng + toCoords.lng) / 2
+    );
+    
+    kakaoMap = new kakao.maps.Map(mapDiv, {center, level: 5});
+
+    // 출발 마커
+    new kakao.maps.Marker({
+      map: kakaoMap,
+      position: new kakao.maps.LatLng(fromCoords.lat, fromCoords.lng),
+      title: '출발: ' + from
+    });
+
+    // 도착 마커
+    new kakao.maps.Marker({
+      map: kakaoMap,
+      position: new kakao.maps.LatLng(toCoords.lat, toCoords.lng),
+      title: '도착: ' + to
+    });
+
+    // 경로 선 그리기
+    new kakao.maps.Polyline({
+      map: kakaoMap,
+      path: [
+        new kakao.maps.LatLng(fromCoords.lat, fromCoords.lng),
+        new kakao.maps.LatLng(toCoords.lat, toCoords.lng)
+      ],
+      strokeWeight: 5,
+      strokeColor: '#2563eb',
+      strokeOpacity: 0.8,
+      strokeStyle: 'solid'
+    });
+
+    // 출발/도착 인포윈도우
+    new kakao.maps.InfoWindow({
+      position: new kakao.maps.LatLng(fromCoords.lat, fromCoords.lng),
+      content: `<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#2563eb;">🚶 출발</div>`
+    }).open(kakaoMap);
+
+    new kakao.maps.InfoWindow({
+      position: new kakao.maps.LatLng(toCoords.lat, toCoords.lng),
+      content: `<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#dc2626;">🏠 도착</div>`
+    }).open(kakaoMap);
+
   } catch(e) {
     div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div>`;
   }
