@@ -45,6 +45,7 @@ select.form-input{background:#fff;}
 .result-loading{text-align:center;padding:30px;color:#888;font-size:14px;}
 .result-content{font-size:14px;line-height:1.8;color:#1a1a1a;white-space:pre-wrap;}
 .kakao-btn{display:block;width:100%;padding:14px;background:#FEE500;color:#000;border:none;border-radius:10px;font-size:15px;font-weight:600;text-align:center;margin-top:12px;text-decoration:none;cursor:pointer;}
+.data-note{font-size:11px;color:#aaa;text-align:center;margin-top:8px;}
 .map-box{background:#e8f0fe;border-radius:14px;padding:30px;text-align:center;margin-bottom:14px;border:1px dashed #93c5fd;}
 .map-icon{font-size:36px;margin-bottom:8px;}
 .map-text{font-size:13px;color:#3b82f6;font-weight:500;}
@@ -59,10 +60,10 @@ select.form-input{background:#fff;}
 .result-item-btn{padding:8px 14px;background:#f0f9ff;color:#0369a1;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:inherit;}
 .route-box{background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:16px;margin-bottom:12px;}
 .route-safe-score{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.score-circle{width:56px;height:56px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0;}
-.score-num{font-size:18px;font-weight:700;color:#16a34a;}
-.score-label{font-size:9px;color:#16a34a;}
-.route-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.score-circle{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0;}
+.score-num{font-size:18px;font-weight:700;}
+.score-label{font-size:9px;}
+.route-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .stat-item{background:#f8f8f8;border-radius:8px;padding:8px;text-align:center;}
 .stat-num{font-size:16px;font-weight:600;}
 .stat-label{font-size:10px;color:#888;margin-top:2px;}
@@ -205,6 +206,8 @@ select.form-input{background:#fff;}
 
 <script>
 const WORKER_URL = 'https://hlife-api.gam1189.workers.dev';
+// 화성도시공사 실제 CCTV 설치현황 데이터 (공공데이터포털, 2025-12-31 기준)
+const CCTV_DATA = [{"n": "경기타운부", "lat": 37.1378807, "lng": 126.9248792, "c": 158}, {"n": "체육시설 1,2부", "lat": 37.1378807, "lng": 126.9248792, "c": 92}, {"n": "체육시설 1부", "lat": 37.1855129, "lng": 127.1045853, "c": 59}, {"n": "체육시설 2부", "lat": 37.0462038, "lng": 126.758972, "c": 61}, {"n": "체육시설 2부", "lat": 37.2856787, "lng": 126.8186264, "c": 16}, {"n": "체육시설 2부", "lat": 37.2187524, "lng": 126.7308767, "c": 9}, {"n": "체육시설 2부", "lat": 37.2260181, "lng": 126.9440272, "c": 21}, {"n": "체육시설 2부", "lat": 37.2260181, "lng": 126.9440272, "c": 13}, {"n": "체육시설 2부", "lat": 37.251593, "lng": 126.9095352, "c": 10}, {"n": "체육시설 2부", "lat": 37.1666786, "lng": 126.7093366, "c": 23}, {"n": "공공시설부", "lat": 37.1378807, "lng": 126.9248792, "c": 5}, {"n": "공공시설부", "lat": 37.2091142, "lng": 126.8149998, "c": 16}, {"n": "대중교통사업처", "lat": 37.1328787, "lng": 126.9222299, "c": 16}, {"n": "대중교통사업처", "lat": 37.2154832, "lng": 127.0868214, "c": 7}, {"n": "대중교통사업처", "lat": 37.1877172, "lng": 126.6528518, "c": 5}, {"n": "대중교통사업처", "lat": 37.2027817, "lng": 126.8394918, "c": 3}, {"n": "제부도관리부", "lat": 37.1708195, "lng": 126.6232333, "c": 16}, {"n": "마리나관리부", "lat": 37.1855742, "lng": 126.6514764, "c": 46}, {"n": "추모공원운영부", "lat": 37.2689749, "lng": 126.9113129, "c": 169}, {"n": "추모공원운영부", "lat": 37.1993969, "lng": 126.881113, "c": 42}, {"n": "주차운영1부", "lat": 37.1837119, "lng": 127.0831962, "c": 823}, {"n": "주차운영2부", "lat": 37.2100269, "lng": 126.8167781, "c": 621}, {"n": "주차관리3부", "lat": 37.2155462, "lng": 127.0870467, "c": 87}, {"n": "스포츠사업처체육센터", "lat": 37.151478, "lng": 126.9381919, "c": 29}, {"n": "스포츠사업처체육센터", "lat": 37.1995585, "lng": 127.1123009, "c": 80}, {"n": "스포츠사업처체육센터", "lat": 37.2297716, "lng": 127.0536216, "c": 90}, {"n": "스포츠사업처체육센터", "lat": 37.0894295, "lng": 126.8163904, "c": 39}, {"n": "스포츠사업처체육센터", "lat": 37.2205933, "lng": 126.9520351, "c": 71}, {"n": "공영버스 cctv", "lat": 37.1328787, "lng": 126.9222299, "c": 301}, {"n": "공영버스 cctv", "lat": 37.2027817, "lng": 126.8394918, "c": 203}, {"n": "공영버스 cctv", "lat": 37.187754, "lng": 126.6535635, "c": 42}, {"n": "공영버스 cctv", "lat": 37.155943, "lng": 127.103806, "c": 24}, {"n": "공영버스 cctv", "lat": 37.185639, "lng": 127.079244, "c": 32}, {"n": "주차관리3부", "lat": 37.2087608, "lng": 127.035928, "c": 41}];
 let capturedImage = null, stream = null;
 
 async function callClaude(prompt, imageBase64) {
@@ -241,6 +244,33 @@ function getCoords(address) {
   });
 }
 
+// 두 좌표 사이 거리(m) 계산
+function distM(lat1, lng1, lat2, lng2) {
+  const R = 6371000;
+  const dLat = (lat2-lat1)*Math.PI/180;
+  const dLng = (lng2-lng1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+// 경로 주변 CCTV 찾기 (출발-도착 직선에서 radius m 이내)
+function findCCTVNearRoute(from, to, radius) {
+  const found = [];
+  for (const cctv of CCTV_DATA) {
+    // 출발지 또는 도착지 기준 반경 내
+    const dFrom = distM(from.lat, from.lng, cctv.lat, cctv.lng);
+    const dTo = distM(to.lat, to.lng, cctv.lat, cctv.lng);
+    // 경로 중간점 기준도 체크
+    const midLat = (from.lat+to.lat)/2, midLng = (from.lng+to.lng)/2;
+    const dMid = distM(midLat, midLng, cctv.lat, cctv.lng);
+    const minD = Math.min(dFrom, dTo, dMid);
+    if (minD <= radius) {
+      found.push({...cctv, dist: Math.round(minD)});
+    }
+  }
+  return found.sort((a,b)=>a.dist-b.dist);
+}
+
 function go(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-'+screen).classList.add('active');
@@ -256,10 +286,10 @@ async function searchWelfare() {
   const div = document.getElementById('welfare-result');
   div.innerHTML = '<div class="result-box"><div class="result-loading">🔍 분석 중...</div></div>';
   try {
-    const result = await callClaude(`화성시 복지 전문 AI입니다. 나이 ${age}세, ${family}, ${income} 시민이 받을 수 있는 화성시 및 국가 복지혜택 5~7개를 아래 형식으로 안내해주세요.\n\n■ [혜택명]\n대상: \n혜택: \n신청: \n---\n\n마지막에 화성시청(031-369-2000), 복지로(bokjiro.go.kr) 안내 추가.`);
-    div.innerHTML = `<div class="result-box"><div class="result-content">${result}</div></div>`;
+    const result = await callClaude('화성시 복지 전문 AI입니다. 나이 '+age+'세, '+family+', '+income+' 시민이 받을 수 있는 화성시 및 국가 복지혜택 5~7개를 아래 형식으로 안내해주세요.\n\n■ [혜택명]\n대상: \n혜택: \n신청: \n---\n\n마지막에 화성시청(031-369-2000), 복지로(bokjiro.go.kr) 안내 추가.');
+    div.innerHTML = '<div class="result-box"><div class="result-content">'+result+'</div></div>';
   } catch(e) {
-    div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div>`;
+    div.innerHTML = '<div class="result-box"><div class="result-content">오류: '+e.message+'</div></div>';
   }
 }
 
@@ -272,111 +302,83 @@ async function searchSafe() {
   const div = document.getElementById('safe-result');
   const mapDiv = document.getElementById('kakao-map');
   mapDiv.style.display = 'none';
-  div.innerHTML = '<div class="result-box"><div class="result-loading">🛡️ 안심 경로 분석 중...</div></div>';
+  div.innerHTML = '<div class="result-box"><div class="result-loading">🛡️ 화성시 CCTV 데이터로 분석 중...</div></div>';
 
-  const cctv=Math.floor(Math.random()*8)+5, lights=Math.floor(Math.random()*15)+10, mins=Math.floor(Math.random()*8)+12, score=Math.floor(Math.random()*20)+78;
-
-  // 카카오맵 기본 링크
-  const kakaoMapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(to)}`;
+  const kakaoMapUrl = 'https://map.kakao.com/link/to/'+encodeURIComponent(to);
 
   try {
-    const result = await callClaude(`화성시 안전 귀가 AI. ${from}→${to} ${time} 도보 안심경로 안내.
-CCTV ${cctv}개, 가로등 ${lights}개, 도보 ${mins}분, 안전점수 ${score}점.
+    const [fromCoords, toCoords] = await Promise.all([getCoords(from), getCoords(to)]);
 
-반드시 아래 형식으로 경유지를 포함해주세요 (실제 존재하는 장소명, 최대 3개):
-[경유지: 장소1, 장소2, 장소3]
+    // 실제 CCTV 데이터로 경로 주변 분석 (반경 1.5km)
+    const nearCCTV = findCCTVNearRoute(fromCoords, toCoords, 1500);
+    const cctvCount = nearCCTV.length;
+    const totalCams = nearCCTV.reduce((s,c)=>s+c.c, 0);
 
-그 다음 상세 안내:
-1.권장경로 설명 2.안전이유(CCTV·가로등·편의점 등) 3.주의사항 4.긴급연락처(112, 031-369-2000)`);
+    // 실제 데이터 기반 안전점수 (CCTV 지점 수 + 카메라 대수 반영)
+    let score = Math.min(98, 60 + cctvCount*5 + Math.floor(totalCams/20));
+    if (cctvCount === 0) score = 55;
+    const scoreColor = score>=80 ? '#16a34a' : score>=65 ? '#d97706' : '#dc2626';
+    const scoreBg = score>=80 ? '#dcfce7' : score>=65 ? '#fef3c7' : '#fee2e2';
 
-    // 경유지 파싱
-    let waypoints = [];
-    const wpMatch = result.match(/\[경유지:\s*([^\]]+)\]/);
-    if (wpMatch) {
-      waypoints = wpMatch[1].split(',').map(w => w.trim()).filter(w => w);
-    }
-    const cleanResult = result.replace(/\[경유지:[^\]]+\]/g, '').trim();
+    // AI에게 실제 데이터 전달
+    const cctvSummary = nearCCTV.slice(0,8).map(c=>c.n+'('+c.c+'대, '+c.dist+'m)').join(', ');
+    const result = await callClaude(
+      '화성시 안전 귀가 AI입니다. '+from+'에서 '+to+'까지 '+time+' 도보 이동 경로를 안내합니다.\n\n'+
+      '【실제 화성시 CCTV 데이터 분석 결과】\n'+
+      '- 경로 주변(반경 1.5km) CCTV 설치 지점: '+cctvCount+'곳\n'+
+      '- 총 카메라 대수: '+totalCams+'대\n'+
+      '- 주요 CCTV 위치: '+(cctvSummary||'경로 주변 데이터 없음')+'\n'+
+      '- 종합 안전점수: '+score+'점\n\n'+
+      '위 실제 데이터를 근거로 다음을 안내해주세요(데이터에 없는 CCTV 개수를 지어내지 마세요):\n'+
+      '1. 이 경로의 안전 수준 평가\n2. CCTV가 밀집한 안전 구간 안내\n3. 야간 도보 주의사항\n4. 긴급연락처(112, 화성시 안전콜 031-369-2000)'
+    );
 
-    div.innerHTML = `
-      <div class="route-box">
-        <div class="route-safe-score">
-          <div class="score-circle"><div class="score-num">${score}</div><div class="score-label">안전점수</div></div>
-          <div><div style="font-size:15px;font-weight:600;">${from} → ${to}</div><div style="font-size:13px;color:#888;">${time}</div></div>
-        </div>
-        <div class="route-stats">
-          <div class="stat-item"><div class="stat-num">${cctv}개</div><div class="stat-label">CCTV</div></div>
-          <div class="stat-item"><div class="stat-num">${lights}개</div><div class="stat-label">가로등</div></div>
-          <div class="stat-item"><div class="stat-num">${mins}분</div><div class="stat-label">도보</div></div>
-        </div>
-      </div>
-      <div class="result-box"><div class="result-content">${cleanResult}</div></div>
-      <a id="kakao-link" class="kakao-btn" href="${kakaoMapUrl}" target="_blank">🗺️ 카카오맵으로 도보 길찾기</a>`;
+    div.innerHTML =
+      '<div class="route-box">'+
+        '<div class="route-safe-score">'+
+          '<div class="score-circle" style="background:'+scoreBg+';"><div class="score-num" style="color:'+scoreColor+';">'+score+'</div><div class="score-label" style="color:'+scoreColor+';">안전점수</div></div>'+
+          '<div><div style="font-size:15px;font-weight:600;">'+from+' → '+to+'</div><div style="font-size:13px;color:#888;">'+time+'</div></div>'+
+        '</div>'+
+        '<div class="route-stats">'+
+          '<div class="stat-item"><div class="stat-num">'+cctvCount+'곳</div><div class="stat-label">경로 주변 CCTV 지점</div></div>'+
+          '<div class="stat-item"><div class="stat-num">'+totalCams+'대</div><div class="stat-label">총 카메라</div></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="result-box"><div class="result-content">'+result+'</div></div>'+
+      '<a class="kakao-btn" id="kakao-link" href="'+kakaoMapUrl+'" target="_blank">🗺️ 카카오맵으로 도보 길찾기</a>'+
+      '<div class="data-note">※ 화성도시공사 CCTV 설치현황 공공데이터 기반 (2025.12.31 기준)</div>';
 
-    // 좌표 찾아서 카카오맵 앱 딥링크 업데이트
-    try {
-      const [fromCoords, toCoords] = await Promise.all([getCoords(from), getCoords(to)]);
+    // 카카오맵 링크 좌표 포함 업데이트
+    const linkEl = document.getElementById('kakao-link');
+    if (linkEl) linkEl.href = 'https://map.kakao.com/link/to/'+encodeURIComponent(to)+','+toCoords.lat+','+toCoords.lng+'/from/'+encodeURIComponent(from)+','+fromCoords.lat+','+fromCoords.lng;
 
-      // 경유지 좌표 가져오기
-      const wpCoordsList = [];
-      for (const wp of waypoints) {
-        try {
-          const wpCoords = await getCoords(wp);
-          wpCoordsList.push({name: wp, ...wpCoords});
-        } catch(e) {}
-      }
+    // 지도 표시 - 실제 CCTV 마커
+    mapDiv.style.display = 'block';
+    const center = new kakao.maps.LatLng((fromCoords.lat+toCoords.lat)/2, (fromCoords.lng+toCoords.lng)/2);
+    const map = new kakao.maps.Map(mapDiv, {center, level:7});
 
-      // 카카오맵 앱 딥링크 (경유지 포함)
-      let viaParams = wpCoordsList.map(wp => `via=${wp.lat},${wp.lng}`).join('&');
-      const kakaoAppUrl = `kakaomap://route?sp=${fromCoords.lat},${fromCoords.lng}&ep=${toCoords.lat},${toCoords.lng}${viaParams ? '&' + viaParams : ''}&by=FOOT`;
-      
-      // 웹 링크 (출발지·도착지 포함)
-      const kakaoWebUrl = `https://map.kakao.com/link/to/${encodeURIComponent(to)},${toCoords.lat},${toCoords.lng}/from/${encodeURIComponent(from)},${fromCoords.lat},${fromCoords.lng}`;
+    // 출발/도착 마커
+    new kakao.maps.Marker({map, position: new kakao.maps.LatLng(fromCoords.lat, fromCoords.lng)});
+    new kakao.maps.Marker({map, position: new kakao.maps.LatLng(toCoords.lat, toCoords.lng)});
+    new kakao.maps.InfoWindow({position:new kakao.maps.LatLng(fromCoords.lat,fromCoords.lng), content:'<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#2563eb;">🚶 출발</div>'}).open(map);
+    new kakao.maps.InfoWindow({position:new kakao.maps.LatLng(toCoords.lat,toCoords.lng), content:'<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#dc2626;">🏠 도착</div>'}).open(map);
+    new kakao.maps.Polyline({map, path:[new kakao.maps.LatLng(fromCoords.lat,fromCoords.lng),new kakao.maps.LatLng(toCoords.lat,toCoords.lng)], strokeWeight:4, strokeColor:'#2563eb', strokeOpacity:0.7, strokeStyle:'dashed'});
 
-      // 모바일이면 앱 딥링크, 아니면 웹
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      const linkEl = document.getElementById('kakao-link');
-      if (linkEl) {
-        if (isMobile) {
-          linkEl.href = kakaoAppUrl;
-          // 앱 없으면 웹으로 폴백
-          linkEl.onclick = function(e) {
-            e.preventDefault();
-            const timeout = setTimeout(() => { window.location.href = kakaoWebUrl; }, 1500);
-            window.location.href = kakaoAppUrl;
-            window.addEventListener('blur', () => clearTimeout(timeout), {once: true});
-          };
-        } else {
-          linkEl.href = kakaoWebUrl;
-        }
-      }
-
-      // 지도 표시
-      mapDiv.style.display = 'block';
-      const center = new kakao.maps.LatLng((fromCoords.lat+toCoords.lat)/2, (fromCoords.lng+toCoords.lng)/2);
-      const map = new kakao.maps.Map(mapDiv, {center, level:5});
-      new kakao.maps.Marker({map, position: new kakao.maps.LatLng(fromCoords.lat, fromCoords.lng)});
-      new kakao.maps.Marker({map, position: new kakao.maps.LatLng(toCoords.lat, toCoords.lng)});
-      
-      // 경유지 마커
-      for (const wp of wpCoordsList) {
-        new kakao.maps.Marker({map, position: new kakao.maps.LatLng(wp.lat, wp.lng)});
-        new kakao.maps.InfoWindow({
-          position: new kakao.maps.LatLng(wp.lat, wp.lng),
-          content: `<div style="padding:3px 6px;font-size:11px;color:#555;">📍 ${wp.name}</div>`
-        }).open(map);
-      }
-
-      new kakao.maps.Polyline({map, path:[new kakao.maps.LatLng(fromCoords.lat,fromCoords.lng),new kakao.maps.LatLng(toCoords.lat,toCoords.lng)], strokeWeight:5, strokeColor:'#2563eb', strokeOpacity:0.8});
-      new kakao.maps.InfoWindow({position:new kakao.maps.LatLng(fromCoords.lat,fromCoords.lng), content:'<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#2563eb;">🚶 출발</div>'}).open(map);
-      new kakao.maps.InfoWindow({position:new kakao.maps.LatLng(toCoords.lat,toCoords.lng), content:'<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#dc2626;">🏠 도착</div>'}).open(map);
-
-    } catch(mapErr) {
-      // 지도 실패해도 AI 결과와 카카오맵 버튼 유지
+    // CCTV 마커 (실제 데이터)
+    for (const c of nearCCTV) {
+      const cctvMarker = new kakao.maps.Marker({
+        map,
+        position: new kakao.maps.LatLng(c.lat, c.lng),
+        image: new kakao.maps.MarkerImage(
+          'data:image/svg+xml;base64,'+btoa('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="10" fill="#16a34a" opacity="0.85"/><text x="12" y="16" font-size="11" fill="white" text-anchor="middle">📹</text></svg>'),
+          new kakao.maps.Size(24,24)
+        )
+      });
     }
 
   } catch(e) {
-    div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div>
-      <a class="kakao-btn" href="${kakaoMapUrl}" target="_blank">🗺️ 카카오맵으로 도보 길찾기</a>`;
+    div.innerHTML = '<div class="result-box"><div class="result-content">오류: '+e.message+'</div></div>'+
+      '<a class="kakao-btn" href="'+kakaoMapUrl+'" target="_blank">🗺️ 카카오맵으로 도보 길찾기</a>';
   }
 }
 
@@ -392,16 +394,16 @@ function searchKids() {
     {name:'동탄어린이병원',addr:'동탄반석로 135',phone:'031-8015-7777',open:true,type:'소아 응급실'},
   ];
   const show = list.filter(i=>i.type.includes(type.split(' ')[0]));
-  document.getElementById('kids-result').innerHTML = `
-    <div class="map-box"><div class="map-icon">🗺️</div><div class="map-text">${loc} 주변 ${type}</div></div>
-    ${(show.length?show:list.slice(0,3)).map(p=>`<div class="result-item">
-      <div style="display:flex;justify-content:space-between;">
-        <div class="result-item-title">${p.name}</div>
-        <span class="result-item-badge ${p.open?'badge-open':'badge-close'}">${p.open?'진료중':'진료종료'}</span>
-      </div>
-      <div class="result-item-sub">${p.addr}</div>
-      <button class="result-item-btn" onclick="location.href='tel:${p.phone}'">📞 ${p.phone}</button>
-    </div>`).join('')}`;
+  document.getElementById('kids-result').innerHTML =
+    '<div class="map-box"><div class="map-icon">🗺️</div><div class="map-text">'+loc+' 주변 '+type+'</div></div>'+
+    (show.length?show:list.slice(0,3)).map(p=>'<div class="result-item">'+
+      '<div style="display:flex;justify-content:space-between;">'+
+        '<div class="result-item-title">'+p.name+'</div>'+
+        '<span class="result-item-badge '+(p.open?'badge-open':'badge-close')+'">'+(p.open?'진료중':'진료종료')+'</span>'+
+      '</div>'+
+      '<div class="result-item-sub">'+p.addr+'</div>'+
+      '<button class="result-item-btn" onclick="location.href=\'tel:'+p.phone+'\'">📞 '+p.phone+'</button>'+
+    '</div>').join('');
 }
 
 function searchParking() {
@@ -411,18 +413,18 @@ function searchParking() {
     {name:'동탄2동 공영주차장',total:150,avail:Math.floor(Math.random()*50),dist:'도보 5분',fee:'30분 500원'},
     {name:'동탄문화센터 주차장',total:200,avail:Math.floor(Math.random()*100)+20,dist:'도보 7분',fee:'1시간 무료'},
   ];
-  document.getElementById('parking-result').innerHTML = `
-    <div class="map-box"><div class="map-icon">🅿️</div><div class="map-text">${loc} 실시간 주차현황</div></div>
-    ${lots.map(p=>{const pct=Math.round((p.avail/p.total)*100);return`<div class="result-item">
-      <div style="display:flex;justify-content:space-between;">
-        <div class="result-item-title">${p.name}</div>
-        <span class="result-item-badge ${p.avail>0?'badge-avail':'badge-full'}">${p.avail>0?p.avail+'면 가능':'만차'}</span>
-      </div>
-      <div class="result-item-sub">${p.dist} · ${p.fee}</div>
-      <div style="background:#f3f4f6;border-radius:6px;height:6px;margin:8px 0;"><div style="background:${pct>30?'#3b82f6':'#ef4444'};height:6px;border-radius:6px;width:${100-pct}%;"></div></div>
-      <div style="font-size:11px;color:#888;margin-bottom:8px;">점유율 ${100-pct}% · 전체 ${p.total}면</div>
-      <button class="result-item-btn" onclick="alert('카카오맵으로 연결됩니다.')">🗺️ 길찾기</button>
-    </div>`}).join('')}`;
+  document.getElementById('parking-result').innerHTML =
+    '<div class="map-box"><div class="map-icon">🅿️</div><div class="map-text">'+loc+' 실시간 주차현황</div></div>'+
+    lots.map(p=>{const pct=Math.round((p.avail/p.total)*100);return '<div class="result-item">'+
+      '<div style="display:flex;justify-content:space-between;">'+
+        '<div class="result-item-title">'+p.name+'</div>'+
+        '<span class="result-item-badge '+(p.avail>0?'badge-avail':'badge-full')+'">'+(p.avail>0?p.avail+'면 가능':'만차')+'</span>'+
+      '</div>'+
+      '<div class="result-item-sub">'+p.dist+' · '+p.fee+'</div>'+
+      '<div style="background:#f3f4f6;border-radius:6px;height:6px;margin:8px 0;"><div style="background:'+(pct>30?'#3b82f6':'#ef4444')+';height:6px;border-radius:6px;width:'+(100-pct)+'%;"></div></div>'+
+      '<div style="font-size:11px;color:#888;margin-bottom:8px;">점유율 '+(100-pct)+'% · 전체 '+p.total+'면</div>'+
+      '<button class="result-item-btn" onclick="alert(\'카카오맵으로 연결됩니다.\')">🗺️ 길찾기</button>'+
+    '</div>'}).join('');
 }
 
 function startCamera() {
@@ -457,9 +459,9 @@ async function analyzePhoto(){
   div.innerHTML='<div class="result-box"><div class="result-loading">🤖 분석 중...</div></div>';
   try {
     const result=await callClaude('이 기기(키오스크/ATM 등) 사용법을 어르신도 알 수 있게 단계별로 친절히 설명해주세요. 1.기기종류 2.주요버튼 3.사용순서 4.주의사항',capturedImage);
-    div.innerHTML=`<div class="result-box"><div class="result-content">${result}</div></div>`;
+    div.innerHTML='<div class="result-box"><div class="result-content">'+result+'</div></div>';
   } catch(e){
-    div.innerHTML=`<div class="result-box"><div class="result-content">오류: ${e.message}</div></div>`;
+    div.innerHTML='<div class="result-box"><div class="result-content">오류: '+e.message+'</div></div>';
   }
 }
 </script>
