@@ -75,9 +75,9 @@ select.form-input{background:#fff;}
 </head>
 <body>
 
-<!-- API 키 설정 -->
 <script>
-const API_KEY = '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';
+// Cloudflare Workers URL (API 키가 서버에 안전하게 저장됨)
+const WORKER_URL = 'https://hlife-api.gam1189.workers.dev';
 
 async function callClaude(prompt, imageBase64) {
   const content = [];
@@ -85,22 +85,17 @@ async function callClaude(prompt, imageBase64) {
     content.push({type:'image', source:{type:'base64', media_type:'image/jpeg', data:imageBase64}});
   }
   content.push({type:'text', text:prompt});
-  
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+
+  const res = await fetch(WORKER_URL, {
     method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': API_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
+    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
       model: 'claude-sonnet-4-6',
       max_tokens: 1500,
       messages: [{role:'user', content}]
     })
   });
-  
+
   const data = await res.json();
   if (!res.ok) throw new Error(data.error?.message || '오류 발생');
   return data.content[0].text;
@@ -300,7 +295,7 @@ function searchKids() {
     {name:'화성시육아종합지원센터',addr:'동탄대로21길 24',phone:'031-8015-9999',open:h<18&&h>9,type:'긴급 돌봄 센터'},
     {name:'동탄어린이병원',addr:'동탄반석로 135',phone:'031-8015-7777',open:true,type:'소아 응급실'},
   ];
-  const show = list.filter(i=>i.type.includes(type.split(' ')[0])).slice(0,3) || list.slice(0,3);
+  const show = list.filter(i=>i.type.includes(type.split(' ')[0]));
   document.getElementById('kids-result').innerHTML = `
     <div class="map-box"><div class="map-icon">🗺️</div><div class="map-text">${loc} 주변 ${type}</div></div>
     ${(show.length?show:list.slice(0,3)).map(p=>`<div class="result-item">
