@@ -381,9 +381,10 @@ CCTV ${cctv}개, 가로등 ${lights}개, 도보 ${mins}분, 안전점수 ${score
     }).open(map);
 
     new kakao.maps.InfoWindow({
-      position: new kakao.maps.LatLng(toCoords.lat, toCoords.lng),
-      content: '<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#dc2626;">🏠 도착</div>'
-    }).open(map);
+      } catch(e) {
+    const kakaoFallbackUrl = `https://map.kakao.com/link/to/${encodeURIComponent(to)}`;
+    div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div><a href="${kakaoFallbackUrl}" target="_blank" style="display:block;width:100%;padding:14px;background:#FEE500;color:#000;border-radius:10px;font-size:15px;font-weight:600;text-align:center;margin-top:12px;text-decoration:none;">🗺️ 카카오맵으로 도보 길찾기</a>`;
+  }
 
   } catch(e) {
     div.innerHTML = `<div class="result-box"><div class="result-content">오류: ${e.message}</div></div>`;
