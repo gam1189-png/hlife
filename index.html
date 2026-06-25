@@ -239,7 +239,15 @@ function getCoords(address) {
           if (status2 === kakao.maps.services.Status.OK) {
             resolve({lat: parseFloat(result2[0].y), lng: parseFloat(result2[0].x)});
           } else {
-            reject(new Error('위치를 찾을 수 없습니다: ' + address));
+            // 역 이름에서 "역" 제거 후 재시도
+            const simplified = address.replace(/역$/, '').replace(/station$/i, '');
+            places.keywordSearch(simplified + ' 역', (result3, status3) => {
+              if (status3 === kakao.maps.services.Status.OK) {
+                resolve({lat: parseFloat(result3[0].y), lng: parseFloat(result3[0].x)});
+              } else {
+                reject(new Error('위치를 찾을 수 없습니다: ' + address));
+              }
+            });
           }
         });
       }
