@@ -102,7 +102,7 @@ select.form-input{background:#fff;}
       </div>
       <div class="card card-wide c-purple" onclick="go('camera')">
         <div class="icon-wrap">📷</div>
-        <div class="card-body"><div class="tag">생활</div><div class="card-title">AI 기기 안내</div><div class="card-desc">카메라로 기기를 비추면 AI가 사용법을 알려드려요</div></div>
+        <div class="card-body"><div class="tag">생활</div><div class="card-title">AI 음성 안내</div><div class="card-desc">기기를 찍으면 AI가 검색 후 음성으로 안내해드려요</div></div>
         <div style="color:#ccc;font-size:18px;">›</div>
       </div>
     </div>
@@ -167,9 +167,9 @@ select.form-input{background:#fff;}
 </div>
 
 <div id="screen-camera" class="screen">
-  <div class="svc-header"><div class="back-btn" onclick="go('home');stopCamera()">‹</div><div class="svc-title">📷 AI 기기 안내</div></div>
+  <div class="svc-header"><div class="back-btn" onclick="go('home');stopCamera()">‹</div><div class="svc-title">📷 AI 음성 안내</div></div>
   <div class="svc-body">
-    <p style="font-size:14px;color:#666;margin-bottom:14px;line-height:1.6;">키오스크, ATM 등 사용법이 궁금한 기기를 카메라로 찍어주세요.</p>
+    <p style="font-size:14px;color:#666;margin-bottom:14px;line-height:1.6;">사용법이 궁금한 기기를 카메라로 찍어주세요. AI가 검색 후 음성으로 안내해드립니다.</p>
     <div class="cam-wrap" id="cam-wrap">
       <video id="cam-video" autoplay playsinline></video>
       <div class="cam-overlay"><button class="cam-btn" onclick="snapPhoto()">📸 촬영</button></div>
@@ -536,13 +536,93 @@ function retakePhoto(){
 async function analyzePhoto(){
   if(!capturedImage){alert('먼저 사진을 찍어주세요.');return;}
   const div=document.getElementById('camera-result');
-  div.innerHTML='<div class="result-box"><div class="result-loading">🤖 분석 중...</div></div>';
+  div.innerHTML='<div class="result-box"><div class="result-loading">🔍 기기를 인식하고 사용법을 검색 중입니다...</div></div>';
   try {
-    const result=await callClaude('이 기기(키오스크/ATM 등) 사용법을 어르신도 알 수 있게 단계별로 친절히 설명해주세요. 1.기기종류 2.주요버튼 3.사용순서 4.주의사항',capturedImage);
-    div.innerHTML='<div class="result-box"><div class="result-content">'+result+'</div></div>';
+    // 1단계: 기기 인식
+    const identified = await callClaudeWithSearch(
+      '이 사진 속 기기가 무엇인지 정확한 제품명 또는 기기 종류를 한 줄로만 답해주세요. 확실하지 않으면 "알 수 없음"이라고만 답하세요.',
+      capturedImage
+    );
+    
+    if (identified.includes('알 수 없음') || identified.trim().length < 2) {
+      const msg = '죄송합니다. 이 기기를 인식하지 못했습니다. 더 가까이서 다시 찍어주세요.';
+      div.innerHTML='<div class="result-box"><div class="result-content">'+msg+'</div></div>';
+      speak(msg);
+      return;
+    }
+
+    div.innerHTML='<div class="result-box"><div class="result-loading">📖 '+identified+' 사용법을 검색 중...</div></div>';
+
+    // 2단계: 웹 검색으로 사용법 찾기
+    const result = await callClaudeWithSearch(
+      '기기명: ' + identified + '
+
+' +
+      '위 기기의 사용법을 웹에서 검색하여 어르신도 이해할 수 있게 단계별로 설명해주세요.
+' +
+      '반드시 지켜야 할 규칙:
+' +
+      '1. 검색으로 확인된 정보만 사용하세요. 추측하지 마세요.
+' +
+      '2. 정보를 찾지 못했다면 "이 기기의 정확한 사용법을 찾지 못했습니다"라고만 답하세요.
+' +
+      '3. 단계별로 짧고 쉽게 설명하세요. (1단계, 2단계...)
+' +
+      '4. 전문 용어 없이 쉬운 말로 설명하세요.',
+      null
+    );
+
+    if (result.includes('찾지 못했습니다')) {
+      div.innerHTML='<div class="result-box"><div class="result-content">🔍 '+identified+'
+
+'+result+'</div></div>';
+      speak(identified + '. ' + result);
+    } else {
+      div.innerHTML=
+        '<div class="result-box">'+
+          '<div style="font-size:13px;font-weight:600;color:#2563eb;margin-bottom:10px;">📱 '+identified+'</div>'+
+          '<div class="result-content">'+result+'</div>'+
+        '</div>'+
+        '<button class="submit-btn" style="margin-top:10px;" onclick="speak(document.querySelector(\'#camera-result .result-content\').innerText)">🔊 다시 읽어주기</button>';
+      speak(identified + ' 사용법입니다. ' + result);
+    }
   } catch(e){
-    div.innerHTML='<div class="result-box"><div class="result-content">오류: '+e.message+'</div></div>';
+    const msg = '오류가 발생했습니다. 다시 시도해주세요.';
+    div.innerHTML='<div class="result-box"><div class="result-content">'+msg+'</div></div>';
+    speak(msg);
   }
+}
+
+// Claude 웹 검색 연동 호출
+async function callClaudeWithSearch(prompt, imageBase64) {
+  const content = [];
+  if (imageBase64) content.push({type:'image', source:{type:'base64', media_type:'image/jpeg', data:imageBase64}});
+  content.push({type:'text', text:prompt});
+  const res = await fetch(WORKER_URL + '/search', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-6',
+      max_tokens:1000,
+      tools:[{type:'web_search_20250305', name:'web_search'}],
+      messages:[{role:'user', content}]
+    })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message || '오류');
+  // 텍스트 블록만 추출
+  return (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+}
+
+// TTS 음성 안내
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text.replace(/[#*]/g,''));
+  utt.lang = 'ko-KR';
+  utt.rate = 0.9;
+  utt.pitch = 1.0;
+  window.speechSynthesis.speak(utt);
 }
 </script>
 </body>
