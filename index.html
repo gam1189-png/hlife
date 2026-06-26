@@ -295,11 +295,10 @@ async function searchWelfare() {
 
 // T맵 보행자 경로 안내
 async function getTmapPedestrianRoute(fromCoords, toCoords, fromName, toName) {
-  const res = await fetch('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1', {
+  const res = await fetch(WORKER_URL + '/tmap/pedestrian', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'appKey': '9sHuRN3BV6a11itXOVYkA3mx0SOW84rT7IaILvWC'
     },
     body: JSON.stringify({
       startX: fromCoords.lng,
