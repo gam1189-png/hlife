@@ -493,7 +493,7 @@ async function searchParking() {
             '<div class="result-item-sub">전체 '+total+'면 · '+p.ocrnDt+'</div>'+
             '<div style="background:#f3f4f6;border-radius:6px;height:6px;margin:8px 0;"><div style="background:'+(pct>30?'#3b82f6':'#ef4444')+';height:6px;border-radius:6px;width:'+pct+'%;"></div></div>'+
             '<div style="font-size:11px;color:#888;margin-bottom:8px;">가용률 '+pct+'%</div>'+
-            '<button class="result-item-btn" onclick="window.open('https://map.kakao.com/link/search/'+encodeURIComponent(p.pkplcNm)+'','_blank')">🗺️ 길찾기</button>'+
+            '<button class="result-item-btn" onclick="var u=\'https://map.kakao.com/link/search/\'+encodeURIComponent(\''+p.pkplcNm+'\');window.open(u,\'_blank\')">🗺️ 길찾기</button>'+
           '</div>';
         }).join('')+
         '<div class="data-note">※ 경기도 교통정보센터 실시간 데이터 기반</div>';
