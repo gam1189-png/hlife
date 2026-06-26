@@ -292,6 +292,43 @@ async function searchWelfare() {
   }
 }
 
+
+// T맵 보행자 경로 안내
+async function getTmapPedestrianRoute(fromCoords, toCoords, fromName, toName) {
+  const res = await fetch('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'appKey': '9sHuRN3BV6a11itXOVYkA3mx0SOW84rT7IaILvWC'
+    },
+    body: JSON.stringify({
+      startX: fromCoords.lng,
+      startY: fromCoords.lat,
+      endX: toCoords.lng,
+      endY: toCoords.lat,
+      startName: fromName,
+      endName: toName,
+      reqCoordType: 'WGS84GEO',
+      resCoordType: 'WGS84GEO',
+      searchOption: '0'
+    })
+  });
+  if (!res.ok) throw new Error('T맵 경로 오류');
+  const data = await res.json();
+  // LineString 좌표 추출
+  const coords = [];
+  for (const f of data.features) {
+    if (f.geometry.type === 'LineString') {
+      for (const c of f.geometry.coordinates) {
+        coords.push(new kakao.maps.LatLng(c[1], c[0]));
+      }
+    }
+  }
+  // 총 거리·시간
+  const info = data.features[0]?.properties || {};
+  return { coords, totalDistance: info.totalDistance, totalTime: info.totalTime };
+}
+
 async function searchSafe() {
   const from = document.getElementById('s-from').value;
   const to = document.getElementById('s-to').value;
@@ -372,7 +409,21 @@ async function searchSafe() {
     new kakao.maps.Marker({map, position: new kakao.maps.LatLng(toCoords.lat, toCoords.lng)});
     new kakao.maps.InfoWindow({position:new kakao.maps.LatLng(fromCoords.lat,fromCoords.lng), content:'<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#2563eb;">🚶 출발</div>'}).open(map);
     new kakao.maps.InfoWindow({position:new kakao.maps.LatLng(toCoords.lat,toCoords.lng), content:'<div style="padding:4px 8px;font-size:12px;font-weight:600;color:#dc2626;">🏠 도착</div>'}).open(map);
-    new kakao.maps.Polyline({map, path:[new kakao.maps.LatLng(fromCoords.lat,fromCoords.lng),new kakao.maps.LatLng(toCoords.lat,toCoords.lng)], strokeWeight:4, strokeColor:'#2563eb', strokeOpacity:0.7, strokeStyle:'dashed'});
+    // T맵 실제 보행자 경로
+    try {
+      const route = await getTmapPedestrianRoute(fromCoords, toCoords, from, to);
+      if (route.coords.length > 0) {
+        new kakao.maps.Polyline({map, path: route.coords, strokeWeight:5, strokeColor:'#2563eb', strokeOpacity:0.85, strokeStyle:'solid'});
+        // 지도 범위를 경로에 맞게 조정
+        const bounds = new kakao.maps.LatLngBounds();
+        route.coords.forEach(c => bounds.extend(c));
+        map.setBounds(bounds);
+      } else {
+        new kakao.maps.Polyline({map, path:[new kakao.maps.LatLng(fromCoords.lat,fromCoords.lng),new kakao.maps.LatLng(toCoords.lat,toCoords.lng)], strokeWeight:4, strokeColor:'#2563eb', strokeOpacity:0.7, strokeStyle:'dashed'});
+      }
+    } catch(e) {
+      new kakao.maps.Polyline({map, path:[new kakao.maps.LatLng(fromCoords.lat,fromCoords.lng),new kakao.maps.LatLng(toCoords.lat,toCoords.lng)], strokeWeight:4, strokeColor:'#2563eb', strokeOpacity:0.7, strokeStyle:'dashed'});
+    }
 
     // CCTV 마커 🟢
     for (const c of nearCCTV) {
