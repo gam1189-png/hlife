@@ -93,12 +93,9 @@ select.form-input{background:#fff;}
       </div>
       <div class="card c-red" onclick="go('safe')">
         <div class="icon-wrap">🛡️</div>
-        <div><div class="tag">안전</div><div class="card-title">세이프패스</div><div class="card-desc">CCTV 기반 안심 귀갓길 안내</div></div>
+        <div><div class="tag">안전</div><div class="card-title">세이프패스</div><div class="card-desc">CCTV·가로등·비상벨 기반 귀갓길 안전 분석</div></div>
       </div>
-      <div class="card c-green" onclick="go('kids')">
-        <div class="icon-wrap">🏥</div>
-        <div><div class="tag">의료</div><div class="card-title">아이케어 맵</div><div class="card-desc">지금 진료 가능한 소아과 찾기</div></div>
-      </div>
+
       <div class="card c-amber" onclick="go('parking')">
         <div class="icon-wrap">🅿️</div>
         <div><div class="tag">교통</div><div class="card-title">스마트 주차</div><div class="card-desc">공영주차장 실시간 빈 자리 확인</div></div>
@@ -152,26 +149,6 @@ select.form-input{background:#fff;}
     <button class="submit-btn" onclick="searchSafe()">안심 경로 찾기</button>
     <div id="safe-result"></div>
     <div id="kakao-map" style="display:none;"></div>
-  </div>
-</div>
-
-<div id="screen-kids" class="screen">
-  <div class="svc-header"><div class="back-btn" onclick="go('home')">‹</div><div class="svc-title">🏥 아이케어 맵</div></div>
-  <div class="svc-body">
-    <div class="form-group"><label class="form-label">현재 위치</label>
-      <select class="form-input" id="k-location">
-        <option>동탄1동</option><option>동탄2동</option><option>동탄3동</option><option>동탄4동</option>
-        <option>동탄5동</option><option>동탄6동</option><option>동탄7동</option><option>동탄8동</option>
-        <option>동탄9동</option><option>병점동</option><option>봉담읍</option><option>향남읍</option>
-      </select>
-    </div>
-    <div class="form-group"><label class="form-label">필요 서비스</label>
-      <select class="form-input" id="k-type">
-        <option>소아과 (야간·주말 포함)</option><option>긴급 돌봄 센터</option><option>소아 응급실</option>
-      </select>
-    </div>
-    <button class="submit-btn" onclick="searchKids()">지금 찾기</button>
-    <div id="kids-result"></div>
   </div>
 </div>
 
@@ -489,29 +466,7 @@ async function searchSafe() {
   }
 }
 
-function searchKids() {
-  const loc = document.getElementById('k-location').value;
-  const type = document.getElementById('k-type').value;
-  const h = new Date().getHours();
-  const list = [
-    {name:'동탄성심병원',addr:'동탄순환대로 180',phone:'031-8015-5000',open:true,type:'소아 응급실'},
-    {name:'동탄제일소아청소년과',addr:'동탄대로 607',phone:'031-8015-1234',open:h<21&&h>8,type:'소아과'},
-    {name:'아이튼튼소아청소년과',addr:'동탄순환대로 754',phone:'031-8015-5678',open:h<20&&h>9,type:'소아과'},
-    {name:'화성시육아종합지원센터',addr:'동탄대로21길 24',phone:'031-8015-9999',open:h<18&&h>9,type:'긴급 돌봄 센터'},
-    {name:'동탄어린이병원',addr:'동탄반석로 135',phone:'031-8015-7777',open:true,type:'소아 응급실'},
-  ];
-  const show = list.filter(i=>i.type.includes(type.split(' ')[0]));
-  document.getElementById('kids-result').innerHTML =
-    '<div class="map-box"><div class="map-icon">🗺️</div><div class="map-text">'+loc+' 주변 '+type+'</div></div>'+
-    (show.length?show:list.slice(0,3)).map(p=>'<div class="result-item">'+
-      '<div style="display:flex;justify-content:space-between;">'+
-        '<div class="result-item-title">'+p.name+'</div>'+
-        '<span class="result-item-badge '+(p.open?'badge-open':'badge-close')+'">'+(p.open?'진료중':'진료종료')+'</span>'+
-      '</div>'+
-      '<div class="result-item-sub">'+p.addr+'</div>'+
-      '<button class="result-item-btn" onclick="location.href=\'tel:'+p.phone+'\'">📞 '+p.phone+'</button>'+
-    '</div>').join('');
-}
+
 
 async function searchParking() {
   const loc = document.getElementById('p-location').value;
