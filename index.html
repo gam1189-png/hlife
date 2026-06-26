@@ -44,7 +44,7 @@ select.form-input{background:#fff;}
 .result-box{background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:18px;margin-top:16px;}
 .result-loading{text-align:center;padding:30px;color:#888;font-size:14px;}
 .result-content{font-size:14px;line-height:1.8;color:#1a1a1a;white-space:pre-wrap;}
-.kakao-btn{display:block;width:100%;padding:14px;background:#FEE500;color:#000;border:none;border-radius:10px;font-size:15px;font-weight:600;text-align:center;margin-top:12px;text-decoration:none;cursor:pointer;}
+.kakao-btn{display:block;width:100%;padding:14px;background:#1a6fda;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;text-align:center;margin-top:12px;text-decoration:none;cursor:pointer;}
 .data-note{font-size:11px;color:#aaa;text-align:center;margin-top:8px;}
 .map-box{background:#e8f0fe;border-radius:14px;padding:30px;text-align:center;margin-bottom:14px;border:1px dashed #93c5fd;}
 .map-icon{font-size:36px;margin-bottom:8px;}
@@ -339,7 +339,7 @@ async function searchSafe() {
   mapDiv.style.display = 'none';
   div.innerHTML = '<div class="result-box"><div class="result-loading">🛡️ CCTV·가로등·비상벨 데이터로 안전 경로 분석 중...</div></div>';
 
-  const kakaoMapUrl = 'https://map.kakao.com/link/to/'+encodeURIComponent(to);
+  const kakaoMapUrl = 'https://map.kakao.com/link/to/'+encodeURIComponent(to);  // 백업용
 
   try {
     const [fromCoords, toCoords] = await Promise.all([getCoords(from), getCoords(to)]);
@@ -391,12 +391,24 @@ async function searchSafe() {
         '</div>'+
       '</div>'+
       '<div class="result-box"><div class="result-content">'+result+'</div></div>'+
-      '<a class="kakao-btn" id="kakao-link" href="'+kakaoMapUrl+'" target="_blank">🗺️ 카카오맵으로 도보 길찾기</a>'+
+      '<a class="kakao-btn" id="kakao-link" href="'+kakaoMapUrl+'" target="_blank">🗺️ T맵으로 도보 길찾기</a>'+
       '<div style="display:flex;gap:12px;justify-content:center;margin-top:10px;font-size:11px;color:#555;"><span>🟢 CCTV</span><span>🟡 가로등</span><span>🟠 안심비상벨</span></div><div class="data-note">※ 화성도시공사 CCTV·안심비상벨 / 화성시청 가로등 공공데이터 기반</div>';
 
-    // 카카오맵 링크 좌표 포함 업데이트
+    // T맵 도보 길찾기 링크 (실제 경로 좌표 기반)
     const linkEl = document.getElementById('kakao-link');
-    if (linkEl) linkEl.href = 'https://map.kakao.com/link/to/'+encodeURIComponent(to)+','+toCoords.lat+','+toCoords.lng+'/from/'+encodeURIComponent(from)+','+fromCoords.lat+','+fromCoords.lng;
+    if (linkEl) {
+      const tmapUrl = 'tmap://route?startx='+fromCoords.lng+'&starty='+fromCoords.lat+
+        '&goalx='+toCoords.lng+'&goaly='+toCoords.lat+
+        '&reqCoordType=WGS84GEO&rpoption=2&startname='+encodeURIComponent(from)+'&goalname='+encodeURIComponent(to);
+      const tmapWebUrl = 'https://tmap.life/route?startx='+fromCoords.lng+'&starty='+fromCoords.lat+
+        '&goalx='+toCoords.lng+'&goaly='+toCoords.lat+'&rpoption=2';
+      linkEl.href = tmapUrl;
+      linkEl.onclick = function(e) {
+        e.preventDefault();
+        window.location.href = tmapUrl;
+        setTimeout(function() { window.open(tmapWebUrl, '_blank'); }, 1500);
+      };
+    }
 
     // 지도 표시 - 실제 CCTV 마커
     mapDiv.style.display = 'block';
@@ -450,7 +462,7 @@ async function searchSafe() {
 
   } catch(e) {
     div.innerHTML = '<div class="result-box"><div class="result-content">오류: '+e.message+'</div></div>'+
-      '<a class="kakao-btn" href="'+kakaoMapUrl+'" target="_blank">🗺️ 카카오맵으로 도보 길찾기</a>';
+      '<a class="kakao-btn" href="'+kakaoMapUrl+'" target="_blank">🗺️ T맵으로 도보 길찾기</a>';
   }
 }
 
