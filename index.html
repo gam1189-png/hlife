@@ -123,11 +123,16 @@ select.form-input{background:#fff;}
         <option>한부모 가구</option><option>임산부 가구</option><option>노인 가구 (65세 이상)</option><option>장애인 가구</option>
       </select>
     </div>
-    <div class="form-group"><label class="form-label">소득 수준</label>
-      <select class="form-input" id="w-income">
+    <div class="form-group"><label class="form-label">건강보험 가입 유형</label>
+      <select class="form-input" id="w-instype">
         <option value="">선택해주세요</option>
-        <option>중위소득 50% 이하</option><option>중위소득 50~100%</option><option>중위소득 100~150%</option><option>중위소득 150% 초과</option>
+        <option>직장가입자</option>
+        <option>지역가입자</option>
       </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">월 건강보험료 납부액 <span style="font-size:11px;color:#999;">(고지서 기준 본인부담금, 원 단위)</span></label>
+      <input class="form-input" type="number" id="w-income" placeholder="예: 65000">
     </div>
     <button class="submit-btn" onclick="searchWelfare()">내 혜택 찾기</button>
     <div id="welfare-result"></div>
@@ -280,12 +285,25 @@ function go(screen) {
 async function searchWelfare() {
   const age = document.getElementById('w-age').value;
   const family = document.getElementById('w-family').value;
-  const income = document.getElementById('w-income').value;
-  if (!age||!family||!income) { alert('모든 항목을 입력해주세요.'); return; }
+  const instype = document.getElementById('w-instype').value;
+  const insurance = document.getElementById('w-income').value;
+  if (!age||!family||!instype||!insurance) { alert('모든 항목을 입력해주세요.'); return; }
   const div = document.getElementById('welfare-result');
-  div.innerHTML = '<div class="result-box"><div class="result-loading">🔍 분석 중...</div></div>';
+  div.innerHTML = '<div class="result-box"><div class="result-loading">🔍 건강보험료 기준으로 분석 중...</div></div>';
   try {
-    const result = await callClaude('화성시 복지 전문 AI입니다. 나이 '+age+'세, '+family+', '+income+' 시민이 받을 수 있는 화성시 및 국가 복지혜택 5~7개를 아래 형식으로 안내해주세요.\n\n■ [혜택명]\n대상: \n혜택: \n신청: \n---\n\n마지막에 화성시청(031-369-2000), 복지로(bokjiro.go.kr) 안내 추가.');
+    const prompt = '화성시 복지 전문 AI입니다.\n\n'+
+      '【신청인 정보】\n'+
+      '- 나이: '+age+'세\n'+
+      '- 가구 유형: '+family+'\n'+
+      '- 건강보험 유형: '+instype+'\n'+
+      '- 월 건강보험료 납부액: '+Number(insurance).toLocaleString()+'원\n\n'+
+      '위 건강보험료를 기준으로 2026년 중위소득 구간을 먼저 판정해주세요.\n'+
+      '(직장가입자 기준: 50%이하≈7만원, 100%이하≈14만원, 150%이하≈21만원 / '+
+      '지역가입자 기준: 50%이하≈4만원, 100%이하≈10만원, 150%이하≈16만원)\n\n'+
+      '그 다음 해당 구간에서 받을 수 있는 화성시 및 국가 복지혜택 5~7개를 안내해주세요.\n\n'+
+      '■ [혜택명]\n대상: \n혜택: \n신청: \n---\n\n'+
+      '마지막에 화성시청(031-369-2000), 복지로(bokjiro.go.kr) 안내 추가.';
+    const result = await callClaude(prompt);
     div.innerHTML = '<div class="result-box"><div class="result-content">'+result+'</div></div>';
   } catch(e) {
     div.innerHTML = '<div class="result-box"><div class="result-content">오류: '+e.message+'</div></div>';
@@ -400,13 +418,18 @@ async function searchSafe() {
       const tmapUrl = 'tmap://route?startx='+fromCoords.lng+'&starty='+fromCoords.lat+
         '&goalx='+toCoords.lng+'&goaly='+toCoords.lat+
         '&reqCoordType=WGS84GEO&rpoption=2&startname='+encodeURIComponent(from)+'&goalname='+encodeURIComponent(to);
-      const tmapWebUrl = 'https://tmap.life/route?startx='+fromCoords.lng+'&starty='+fromCoords.lat+
-        '&goalx='+toCoords.lng+'&goaly='+toCoords.lat+'&rpoption=2';
+      // T맵 앱 없으면 카카오맵 도보로 폴백
+      const kakaoFallback = 'https://map.kakao.com/link/to/'+encodeURIComponent(to)+','+toCoords.lat+','+toCoords.lng+'/from/'+encodeURIComponent(from)+','+fromCoords.lat+','+fromCoords.lng;
       linkEl.href = tmapUrl;
       linkEl.onclick = function(e) {
         e.preventDefault();
-        window.location.href = tmapUrl;
-        setTimeout(function() { window.open(tmapWebUrl, '_blank'); }, 1500);
+        const ua = navigator.userAgent.toLowerCase();
+        if (/android|iphone|ipad/.test(ua)) {
+          window.location.href = tmapUrl;
+          setTimeout(function() { window.location.href = kakaoFallback; }, 2000);
+        } else {
+          window.open(kakaoFallback, '_blank');
+        }
       };
     }
 
