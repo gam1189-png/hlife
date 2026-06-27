@@ -208,7 +208,11 @@ async function callClaude(prompt, imageBase64) {
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error?.message || '오류 발생');
-  return data.content[0].text;
+  if (!data.content || data.content.length === 0) throw new Error('응답 없음: ' + JSON.stringify(data).substring(0,100));
+  var text = '';
+  for (var i=0; i<data.content.length; i++) { if(data.content[i].type==='text') text += data.content[i].text; }
+  if (!text) throw new Error('텍스트 없음');
+  return text;
 }
 
 function getCoords(address) {
